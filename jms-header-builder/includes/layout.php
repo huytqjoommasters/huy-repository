@@ -72,8 +72,14 @@
                 <i class="fa fa-font"></i>
                 <span><?php esc_html_e( 'Text', 'jmsheaderbuilder' ); ?></span>
                 <div class="addon-tools">
+                    <a class="addon-action edit-addon-text"><i class="fa fa-pencil-square-o"></i></a>
                     <a class="addon-action duplicate-addon"><i class="fa fa-clone"></i></a>
                     <a class="addon-action remove-addon"><i class="fa fa-trash"></i></a>
+                </div>
+                <div class="hb-input-group">
+                    <input type="hidden" name="className" value="" class="txt-input" data-bind = "className">
+                    <input type="hidden" name="ID" value="" class="txt-input" data-bind = "ID">
+                    <input type="hidden" name="hb-text-content" value="" class="txt-input" data-bind = "hb-text-content">
                 </div>
             </div>
             <div class="header-item element-item" data-item="logo">
@@ -96,7 +102,9 @@
             <?php if( $wr_is_woocommerce_activated ) { ?>
                 <div class="header-item element-item" data-item="shopping-cart">
                     <i class="fa fa-shopping-cart"></i>
-                    <span><?php esc_html_e( 'Cart', 'jmsheaderbuilder' ); ?></span>
+                    <span>
+                        <?php esc_html_e( 'Cart', 'jmsheaderbuilder' ); ?>
+                    </span>
                     <div class="addon-tools">
                         <a class="addon-action duplicate-addon"><i class="fa fa-clone"></i></a>
                         <a class="addon-action remove-addon"><i class="fa fa-trash"></i></a>
@@ -108,6 +116,7 @@
         <div class="jms-header-wrapper">
             <div id="rowlist">
                 <div class="hb-content">
+                    <a id="add-image" class="btn btn-default">ssssdd</a>
                     <?php
                         if( isset($hb_post_content) && count($hb_post_content) > 0 ) {
                             foreach ( $hb_post_content as $row ) {
@@ -168,9 +177,32 @@
                                                                 <?php echo $addon['addon_name']; ?>
                                                             </span>
                                                             <div class="addon-tools">
+                                                                <?php if($addon['addon_name'] == 'text') {?>
+                                                                    <a class="addon-action edit-addon-text"><i class="fa fa-pencil-square-o"></i></a>
+                                                                <?php } ?>
                                                                 <a class="addon-action duplicate-addon"><i class="fa fa-clone"></i></a>
                                                                 <a class="addon-action remove-addon"><i class="fa fa-trash"></i></a>
                                                             </div>
+                                                            <?php if( $addon['addon_name'] == 'text' ) {
+
+                                                                ?>
+                                                                <div class="hb-input-group">
+                                                                <?php
+                                                                if(count($addon['fields']) > 0){
+                                                                    foreach ( $addon['fields'] as $field ){
+                                                                ?>
+                                                                    <input type="hidden" name="<?php echo $field["name"]; ?>" value="<?php echo $field["value"]; ?>" class="txt-input" data-bind="<?php echo $field["name"]; ?>" />
+                                                            <?php } } else {
+                                                                    ?>
+                                                                    <input type="hidden" name="className" value="" class="txt-input" data-bind="className" />
+                                                                    <input type="hidden" name="ID" value="" class="txt-input" data-bind="ID" />
+                                                                    <input type="hidden" name="hb-text-content" value="" class="txt-input" data-bind="hb-text-content" />
+                                                                    <?php
+                                                                } ?>
+                                                                </div>
+                                                            <?php
+                                                            }
+                                                            ?>
                                                         </div>
                                                     <?php
                                                         }
@@ -195,6 +227,7 @@
                 </div>
             </div>
         </div>
+
         <div class="hidden">
             <div id="jmsheaderbuilder-row">
                 <div class="row" data-name="Row" data-fluid="0" data-layout="12" data-active="1">
@@ -456,6 +489,59 @@
             </div>
         </div>
     </div>
+
+        <div class="hb-settings-box addon-text-settings">
+            <div class="seting-wrapper">
+                <h3 class="title-setting"><?php esc_html_e( 'Text settings', 'wr-nitro' ); ?><span class="close-setting"></span></h3>
+                <a class="hb-settings-close">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </a>
+                <div class="row form-group">
+                    <div class="col-1">
+                        <h5 class="title-field"><?php esc_html_e( 'Content', 'wr-nitro' ); ?></h5>
+                        <div class="content-group">
+                            <div class="hb-editor" data-editor="text-content">
+                                <?php
+                                wp_editor( '', 'text-content',
+                                    array(
+                                        'default_editor' => true,
+                                        'editor_class'   => 'hb-text-editor'
+                                    )
+                                );
+                                ?>
+                                <input type="hidden" class="hb-editor-hidden addon-input" data-bind="hb-text-content" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-lg-6">
+                        <h5 class="title-field"><?php esc_html_e( 'Class', 'wr-nitro' ); ?></h5>
+                        <div class="content-group"><input type="text" class="txt-class addon-input" data-bind="className" /></div>
+                    </div>
+                    <div class="col-lg-6">
+                        <h5 class="title-field"><?php esc_html_e( 'ID', 'wr-nitro' ); ?></h5>
+                        <div class="content-group"><input type="text" class="txt-id addon-input" data-bind="ID" /></div>
+                    </div>
+                </div>
+                <div class="hb-settings-footer">
+                    <a href="javascript:void(0)" id="save-settings" class="btn btn-default pull-right">
+                        <?php esc_html_e( 'Save', 'wr-nitro' ); ?>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    <div class="hb-settings-box addon-logo-settings">
+        <div class="seting-wrapper">
+            <h3 class="title-setting"><?php esc_html_e( 'Logo settings', 'wr-nitro' ); ?><span class="close-setting"></span></h3>
+            <a class="hb-settings-close">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
+
+        </div>
+    </div>
+
     <textarea id="data-header" name="content" class="hidden"></textarea>
     <form name="layoutForm" action="" method="post" id="layoutForm">
         <input type="hidden" name="jmsformjson" id="jmsformjson" value="" />

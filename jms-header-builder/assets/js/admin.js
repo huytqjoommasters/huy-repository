@@ -28,15 +28,7 @@
     }
 
     $.fn.getInputValue = function(){
-        if (this.attr('type') == 'checkbox') {
-            if (this.attr("checked")) {
-                return '1';
-            } else {
-                return '0';
-            }
-        } else {
-            return this.val();
-        }
+        return this.val();
     }
 
     $(document).ready(function() {
@@ -48,6 +40,37 @@
             $('.hb-content').append($rowClone);
         });
     });
+    $(document).on('click','.edit-addon-text',function(event) {
+        $(this).closest('.header-item').addClass('addon-active');
+        var popup = $('.addon-text-settings');
+        // Show Value
+        var addon_input = $(this).closest('.header-item.addon-active');
+        var txt_class = addon_input.find("input[name='className']").val();
+        var txt_id = addon_input.find("input[name='ID']").val();
+        var txt_content = addon_input.find("input[name='hb-text-content']").val();
+
+        $('.hb-settings-box > .seting-wrapper > .form-group .txt-class').val(txt_class);
+        $('.hb-settings-box > .seting-wrapper > .form-group .txt-id').val(txt_id);
+        tinymce.editors['text-content'].setContent(txt_content);
+
+        get_popup(popup);
+        $('.addon-text-settings #save-settings').data('flag', 'addon-text-setting');
+    });
+    $(document).on('click','.hb-settings-close',function(event) {
+        $(this).closest('.hb-settings-box').removeClass('show');
+        $('.header-item.addon-active').removeClass('addon-active');
+    });
+    function get_popup(id) {
+        id.addClass('show');
+        var winH = $(window).height();
+        var winW = $(window).width();
+        var popW = winW*30/100;
+        var popH = id.find('.seting-wrapper').height();
+        id.css('width', popW);
+        id.css('top',  winH/2 - popH/2);
+        id.css('left', winW/2 - popW/2);
+        $(id).fadeIn(500);
+    }
 
     $(document).on('click','.row-setting',function(event) {
         event.preventDefault();
@@ -93,7 +116,7 @@
                 break;
 
             case 'column-setting':
-                $('#layout-modal').find('.addon-input').each(function(){
+                $('#layout-modal').find('.addon-input').each( function() {
                     var $this = $(this),
                         $parent = $('.column-active'),
                         $attrname = $this.data('attrname');
@@ -110,12 +133,44 @@
                     }
                 });
                 break;
+            case 'addon-text-setting':
+                var text_data = tinymce.editors['text-content'].getContent();
+                var text_content = $(this).closest('.seting-wrapper').find('.hb-editor-hidden');
+                text_content.val(text_data);
+                var addoninputs = $('.hb-settings-box > .seting-wrapper > .form-group .addon-input');
+                var ip_arr = [];
+                var this_addon = $('.header-item.addon-active');
+                    addoninputs.each(function(aiindex) {
+                        var $input 	= $(this),
+                            addoninputIndex 	= aiindex;
+                        var val_result = $input.val();
 
+                        ip_arr[addoninputIndex] = {
+                            'name'	: $input.data('bind'),
+                            'value'	: val_result
+                        }
+
+                    });
+
+                this_addon.data( { fields: ip_arr} );
+
+                var val1 = $('.hb-settings-box > .seting-wrapper > .form-group .hb-editor-hidden').val();
+                var val2 = $('.hb-settings-box > .seting-wrapper > .form-group .txt-class').val();
+                var val3 = $('.hb-settings-box > .seting-wrapper > .form-group .txt-id').val();
+
+                this_addon.find("input[name='hb-text-content']").val(val1);
+                this_addon.find("input[name='className']").val(val2);
+                this_addon.find("input[name='ID']").val(val3);
+
+                $(this).closest('.hb-settings-box').removeClass('show');
+                $('.header-item.addon-active').removeClass('addon-active');
+
+                break;
             default:
                 alert('You are doing somethings wrongs. Try again');
         }
     });
-
+    //Set Layout Column
     $(document).on('click','.column-layout',function(event) {
         event.preventDefault();
         layouttype = $(this).data('layout');
@@ -172,7 +227,7 @@
         UiSort();
         item_draggable();
     });
-
+    //Add Addon
     $(document).on('click', '.add-addon', function(event){
         event.preventDefault();
         $('#modal-addons .addon-filter ul li').removeClass('active').first().addClass('active');
@@ -187,8 +242,7 @@
     //Remove Addon
     $(document).on('click', '.remove-addon', function(event){
         event.preventDefault();
-        if ( confirm("Click Ok button to delete Block, Cancel to leave.") == true )
-        {
+        if ( confirm("Click Ok button to delete Block, Cancel to leave.") == true ) {
             $(this).closest('.element-item').slideUp(200, function(){
                 $(this).remove();
             });
@@ -200,7 +254,7 @@
         var $clone = $(this).closest('.element-item').clone();
         $(this).closest('.column').append($clone);
     });
-
+    //Duplicate Addon
     $(document).on('click', '.duplicate-row', function(event){
         event.preventDefault();
         $('.row').removeClass('row-active');
@@ -211,6 +265,7 @@
         UiSort();
         item_draggable();
     });
+    //Remove Addon
     $(document).on('click','.remove-row',function(event) {
         event.preventDefault();
         if ( confirm("Click Ok button to delete Row, Cancel to leave.") == true )
@@ -220,6 +275,8 @@
             });
         }
     });
+
+    // Column setting button
     $(document).on('click','.column-setting',function(event) {
         event.preventDefault();
         $('.layout-column').removeClass('column-active');
@@ -243,6 +300,37 @@
         $('#layout-modal').modal();
     });
 
+    $(document).on('click','#add-image',function(e){
+        var frame;
+        e.preventDefault();
+        if (frame) {
+            frame.open();
+            return;
+        }
+        // Create a new media frame
+        frame = wp.media({
+            title: 'Select Image Layer',
+            button: {text: 'Use this media'},
+            multiple: false
+        });
+
+        //When an image is selected in media frame...
+        frame.on('select', function() {
+            var attachment = frame.state().get('selection').first().toJSON();
+            var media_url = attachment['url'].replace($('#root_url').val(), "");
+            var tpl_caption = $( '<div />', {
+                'class': 'tp-caption ui-draggable ui-draggable-handle'
+            });
+            tpl_caption.html('<img src="' + attachment['url'] + '" />');
+            tpl_caption.attr('data-title',attachment['title']);
+            tpl_caption.attr('data-type','image');
+            tpl_caption.attr('data-url',media_url);
+            $('#frame_layer').append(tpl_caption);
+            list_event();
+        });
+        frame.open();
+    });
+
     function item_draggable() {
         var row_item = $(".hb-list-element .element-item"),
             row_sortable = $( ".layout-column .column" );
@@ -262,7 +350,6 @@
             var $row 		= $(this),
                 rowIndex 	= index,
                 rowObj 		= $row.data();
-            console.log(rowObj);
             delete rowObj.sortableItem;
             var layout = 12;
             layout 	= $row.data('layout');
@@ -289,7 +376,7 @@
                     'addons'		: []
                 };
                 // Find Addon Elements
-                var addons = $column.find('.element-item');
+                var addons = $column.find('.header-item');
                 addons.removeClass('addon-active');
                 addons.each(function(aindex) {
                     var $addon 	= $(this),
@@ -298,8 +385,19 @@
                     delete addonObj.sortableItem;
                     config[rowIndex].cols[colIndex].addons[addonIndex] = {
                         'addon_name' 				: $addon.data('item'),
-                        'icon_class'                : $addon.children().attr('class')
+                        'icon_class'                : $addon.children().attr('class'),
+                        'fields'			: []
                     };
+                    var addoninputs = $addon.find('.hb-input-group .txt-input');
+                    addoninputs.each(function(aiindex) {
+                        var $input 	= $(this),
+                            addoninputIndex 	= aiindex;
+                        var val_result = $input.val();
+                        config[rowIndex].cols[colIndex].addons[addonIndex].fields[addoninputIndex] = {
+                            'name'	: $input.data('bind'),
+                            'value'	: val_result
+                        };
+                    });
                 });
             });
         });
@@ -327,8 +425,13 @@
     $(document).on('click','#btn-save-header',function(event) {
         var param = getLayout();
         var j = JSON.stringify(param);
+        //console.log(j);
         $("textarea#data-header").text(j);
         $("#publish").trigger("click");
+
     });
+
 })(jQuery);
+
+
 

@@ -1,0 +1,7 @@
+.addon-menu ul{
+    display: flex;
+    flex-wrap:wrap;
+}
+.addon-menu ul li{
+    list-style: none;
+}

@@ -957,3 +957,33 @@ img{
 .jms-modal .remove-media {
     margin-left:10px;
 }
+
+/* Popup Setting */
+    .hb-settings-box {
+        position:fixed;
+        top:0;
+        left: 0;
+        width:auto;
+        height:auto;
+        z-index:9999;
+        padding:20px;
+        background: #fff;
+        box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.3);
+        display:none;
+    }
+.hb-settings-box.active {
+    display:block;
+}
+.hb-settings-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+.seting-wrapper1 {
+        width: 600px;
+        height:auto;
+        background:#fff;
+        margin: auto;
+    }
+/* ------ */

@@ -19,10 +19,11 @@
     define('JMS_HEADER_BUILDER_CSS_URL', JMS_HEADER_BUILDER_URL . 'assets/css/');
     define('JMS_HEADER_BUILDER_JS_URL', JMS_HEADER_BUILDER_URL . 'assets/js/');
     define('JMS_HEADER_BUILDER_ADMIN_PATH' , JMS_HEADER_BUILDER_PLUGIN_PATH . 'admin/');
-    define('JMS_BRANDS_INCLUDES_PATH' , JMS_HEADER_BUILDER_PLUGIN_PATH . 'includes/');
+    define('JMS_HEADER_BUILDER_INCLUDES_PATH' , JMS_HEADER_BUILDER_PLUGIN_PATH . 'includes/');
     define( 'JMS_HEADER_BUILDER_VERSION', '1.0.0' );
 
     require 'admin/admin.php';
+    require 'includes/customize.php';
 
     register_activation_hook( __FILE__, 'jmsheaderbuilder_activate' );
 
@@ -30,10 +31,11 @@
         return true;
     }
 
-    register_deactivation_hook(__FILE__, 'jmsheaderbuilder_deactivation');
+    register_deactivation_hook( __FILE__, 'jmsheaderbuilder_deactivation' );
 
     function jmsheaderbuilder_deactivation() {
         return true;
     }
 
     new JmsHeaderBuilder_Admin();
+    new JmsHeaderBuilder_Customize();
