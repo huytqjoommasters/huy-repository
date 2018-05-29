@@ -106,6 +106,7 @@ class JmsHeaderBuilder_Admin
     public function hb_enqueue_scripts()
     {
         wp_enqueue_style('jmsheaderbuilder-front', JMS_HEADER_BUILDER_CSS_URL . 'front.css');
+        wp_enqueue_script('jmsheaderbuilder-fr-js', JMS_HEADER_BUILDER_JS_URL . 'hb-front.js', array('jquery'));
     }
 
     public static function convert_serialize($post_id, $post)
@@ -183,6 +184,7 @@ class JmsHeaderBuilder_Admin
         $header_obj = get_post($header_id);
         $header_data = unserialize($header_obj->post_content);
         foreach ($header_data as $row) {
+            print_r($row);
             if ($row['settings']['active'] != 0) {
                 ?>
                 <div class="jms-row">
@@ -420,13 +422,14 @@ class JmsHeaderBuilder_Admin
                                                     </a>
                                                 </div>
                                                 <div class="sidebar-wrapper">
-                                                    <div class="sidebar-content">
+                                                    <div class="sidebar-content pos-<?php echo $sd_pos;?>">
                                                         <?php
                                                             if($sd_id != "") {
                                                                 dynamic_sidebar($sd_id);
                                                             }
                                                         ?>
                                                     </div>
+                                                    <div class="overlay"></div>
                                                 </div>
                                                 <?php
                                             }

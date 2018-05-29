@@ -39,6 +39,7 @@
             var $rowClone = $('#jmsheaderbuilder-row .row').clone(true);
             $('.hb-content').append($rowClone);
         });
+
     });
     // Edit addon text
     $(document).on('click', '.edit-addon-text', function (event) {
@@ -50,8 +51,8 @@
         var txt_id = this_addon.find("input[name='ID']").val();
         var txt_content = this_addon.find("input[name='hb-text-content']").val();
         //$('.addon-text-settings > .seting-wrapper > .form-group .txt-class').val(txt_class);
-        $('.addon-text-settings > .seting-wrapper').find('.txt-class.setting-input').val(txt_class);
-        $('.addon-text-settings > .seting-wrapper').find('.txt-id.setting-input').val(txt_id);
+        $('.addon-text-settings > .seting-wrapper').find("input[name='className']").val(txt_class);
+        $('.addon-text-settings > .seting-wrapper').find("input[name='ID']").val(txt_id);
         //$('.addon-text-settings > .seting-wrapper > .form-group .txt-id').val(txt_id);
         tinymce.editors['text-content'].setContent(txt_content);
 
@@ -68,11 +69,9 @@
         var this_addon = $(this).closest('.header-item.addon-active');
         var sd_list = this_addon.find("input[name='sidebar-list']").val();
         var sd_pos = this_addon.find("input[name='sidebar-pos']").val();
-        var sd_width = this_addon.find("input[name='sidebar-width']").val();
         var sd_icon = this_addon.find("input[name='sidebar-icon-class']").val();
 
         var this_setting = $('.addon-sidebar-settings');
-        this_setting.find("input[name='sidebar-width']").val(sd_width);
         this_setting.find("input[name='sidebar-icon-class']").val(sd_icon);
         this_setting.find('#sidebar-list option').each(function() {
             if ( $(this).val() == sd_list ) {
@@ -173,6 +172,7 @@
     $(document).on('click', '.hb-settings-close', function (event) {
         $(this).closest('.hb-settings-box').removeClass('show');
         $('.header-item.addon-active').removeClass('addon-active');
+        $('.row.row-active').removeClass('.row-active');
     });
 
     function get_popup(id) {
@@ -193,26 +193,17 @@
         $('.row').removeClass('row-active');
         var $parent = $(this).closest('.row');
         $parent.addClass('row-active');
-        $('#layout-modal').find('.jms-modal-body').empty();
-        $('#layout-modal .jms-modal-title').text('Row Settings');
-        $('#layout-modal #save-settings').data('flag', 'row-setting');
+        $('.addon-row-settings #save-settings').data('flag', 'row-setting');
+        var popup = $('.addon-row-settings');
+        get_popup(popup);
 
-        var $clone = $('.row-settings').clone(true);
-        $clone = $('#layout-modal').find('.jms-modal-body').append($clone);
-        $clone.find('.addon-input').each(function () {
-            var $that = $(this),
-                attrValue = $parent.data($that.data('attrname'));
-            $that.setInputValue({filed: attrValue});
-        });
-
-        $('#layout-modal').modal();
     });
     // Save setting click
     $(document).on('click', '#save-settings', function (event) {
         event.preventDefault();
         var flag = $(this).data('flag');
         switch (flag) {
-            case 'row-setting':
+            case 'row-setting1':
                 $('#layout-modal').find('.addon-input').each(function () {
                     var $this = $(this),
                         $parent = $('.row-active'),
@@ -230,7 +221,45 @@
                     $parent.attr('data-' + $attrname, $this.getInputValue());
                 });
                 break;
+            case 'row-setting':
+                var val1 = $(this).closest('.seting-wrapper').find("input[name='name']").val();
+                var val2 = $(this).closest('.seting-wrapper').find("input[name='row-class']").val();
+                var this_row = $('.row-active');
+                this_row.find("input[name='name']").val(val1);
+                this_row.find("input[name='row-class']").val(val2);
 
+                this_row.find("> .row-input-group .row-input").each(function(){
+                    var $this = $(this);
+                    var attrname = $this.data('bind');
+                    this_row.removeData(attrname);
+                    if (attrname == 'name') {
+                        var nameVal = $this.val();
+                        if (nameVal != '' || $this.val() != null) {
+                            $('.row-active .row-name').text($this.val());
+                        } else {
+                            $('.row-active .row-name').text('Row');
+                        }
+                    }
+                    this_row.attr('data-' + attrname, $this.getInputValue());
+                });
+
+
+                this_row.find('.row-input-group .row-input').each(function(){
+                    var $this = $(this);
+                    var attrname = $this.data('bind');
+                    this_row.removeData(attrname);
+                    if (attrname == 'row-name') {
+                        var nameVal = $this.val();
+                        if (nameVal != '' || $this.val() != null) {
+                            $('.row-active .row-name').text($this.val());
+                        } else {
+                            $('.row-active .row-name').text('Row');
+                        }
+                    }
+                    this_row.attr('data-' + attrname, $this.getInputValue());
+                });
+
+                break;
             case 'column-setting':
                 $('#layout-modal').find('.addon-input').each(function () {
                     var $this = $(this),
@@ -251,11 +280,11 @@
                 break;
             case 'addon-text-setting':
                 var text_data = tinymce.editors['text-content'].getContent();
-                var text_content = $(this).closest('.seting-wrapper').find('.hb-editor-hidden.setting-input').val(text_data);
+                $(this).closest('.seting-wrapper').find("input[name='hb-editor-hidden']").val(text_data);
                 var this_addon = $('.header-item.addon-active');
-                var val1 = $(this).closest('.seting-wrapper').find('.hb-editor-hidden.setting-input').val();
-                var val2 = $(this).closest('.seting-wrapper').find('.txt-class.setting-input').val();
-                var val3 = $(this).closest('.seting-wrapper').find('.txt-id.setting-input').val();
+                var val1 = $(this).closest('.seting-wrapper').find("input[name='hb-editor-hidden']").val();
+                var val2 = $(this).closest('.seting-wrapper').find("input[name='className']").val();
+                var val3 = $(this).closest('.seting-wrapper').find("input[name='ID']").val();
 
                 this_addon.find("input[name='hb-text-content']").val(val1);
                 this_addon.find("input[name='className']").val(val2);
@@ -303,12 +332,10 @@
                 var this_addon = $('.header-item.addon-active');
                 var val1 = $(this).closest('.seting-wrapper').find("#sidebar-list").val();
                 var val2 = $(this).closest('.seting-wrapper').find("#sidebar-pos").val();
-                var val3 = $(this).closest('.seting-wrapper').find("input[name='sidebar-width']").val();
-                var val4 = $(this).closest('.seting-wrapper').find("input[name='sidebar-icon-class']").val();
+                var val3 = $(this).closest('.seting-wrapper').find("input[name='sidebar-icon-class']").val();
                 this_addon.find("input[name='sidebar-list']").val(val1);
                 this_addon.find("input[name='sidebar-pos']").val(val2);
-                this_addon.find("input[name='sidebar-width']").val(val3);
-                this_addon.find("input[name='sidebar-icon-class']").val(val4);
+                this_addon.find("input[name='sidebar-icon-class']").val(val3);
                 break;
             default:
                 alert('You are doing somethings wrongs. Try again');

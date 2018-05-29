@@ -71,7 +71,6 @@ if ($header_data['post_content']) {
                 <div class="hb-input-group">
                     <input type="hidden" name="sidebar-list" value="" class="addon-input" data-bind="sidebar-list">
                     <input type="hidden" name="sidebar-pos" value="" class="addon-input" data-bind="sidebar-pos">
-                    <input type="hidden" name="sidebar-width" value="" class="addon-input" data-bind="sidebar-width">
                     <input type="hidden" name="sidebar-icon-class" value="" class="addon-input"
                            data-bind="sidebar-icon-class">
                 </div>
@@ -87,8 +86,7 @@ if ($header_data['post_content']) {
                 <div class="hb-input-group">
                     <input type="hidden" name="className" value="" class="addon-input" data-bind="className">
                     <input type="hidden" name="ID" value="" class="addon-input" data-bind="ID">
-                    <input type="hidden" name="hb-text-content" value="" class="addon-input"
-                           data-bind="hb-text-content">
+                    <input type="hidden" name="hb-text-content" value="" class="addon-input" data-bind="hb-text-content">
                 </div>
             </div>
             <div class="header-item element-item" data-item="logo">
@@ -160,6 +158,10 @@ if ($header_data['post_content']) {
                             ?>
                             <div class="row row-active" data-name="<?php echo $row["name"]; ?>" data-fluid="0"
                                  data-layout="<?php echo $row["layout"]; ?>" data-active="1">
+                                <div class="row-input-group">
+                                    <input type="hidden" name="name" value="" class="row-input" data-bind="name"/>
+                                    <input type="hidden" name="row-class" value="" class="row-input" data-bind="row-class"/>
+                                </div>
                                 <div class="row-title">
                                     <div class="pull-left">
                                         <span><i class="fa fa-arrows"></i></span>
@@ -272,8 +274,8 @@ if ($header_data['post_content']) {
                                                                         <input type="hidden"
                                                                                name="<?php echo $field["name"]; ?>"
                                                                                value="<?php echo $field["value"]; ?>"
-                                                                               class="addon-input"
-                                                                               data-bind="<?php echo $field["name"]; ?>"/>
+                                                                               data-bind="<?php echo $field["name"]; ?>"
+                                                                               class="addon-input"/>
                                                                     <?php }
                                                                 } else {
                                                                     ?>
@@ -377,7 +379,6 @@ if ($header_data['post_content']) {
                                                                 } else { ?>
                                                                     <input type="hidden" name="sidebar-list" value="" class="addon-input" data-bind="sidebar-list">
                                                                     <input type="hidden" name="sidebar-pos" value="" class="addon-input" data-bind="sidebar-pos">
-                                                                    <input type="hidden" name="sidebar-width" value="" class="addon-input" data-bind="sidebar-width">
                                                                     <input type="hidden" name="sidebar-icon-class" value="" class="addon-input"
                                                                            data-bind="sidebar-icon-class">
                                                                 <?php } ?>
@@ -414,6 +415,10 @@ if ($header_data['post_content']) {
         <div class="hidden">
             <div id="jmsheaderbuilder-row">
                 <div class="row" data-name="Row" data-fluid="0" data-layout="12" data-active="1">
+                    <div class="row-input-group">
+                        <input type="hidden" name="name" value="" class="row-input" data-bind="name"/>
+                        <input type="hidden" name="row-class" value="" class="row-input" data-bind="row-class"/>
+                    </div>
                     <div class="row-title">
                         <div class="pull-left">
                             <span><i class="fa fa-arrows"></i></span>
@@ -483,43 +488,7 @@ if ($header_data['post_content']) {
         </div>
 
     </div>
-    <div class="jms-modal fade" id="modal-addons" tabindex="-1" role="dialog" aria-labelledby="modal-addon-label"
-         aria-hidden="true">
-        <div class="jms-modal-dialog jms-modal-xlg">
-            <div class="jms-modal-content">
-                <div class="jms-modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3 class="jms-modal-title" id="modal-addons-label">Add addon or Plugin</h3>
-                    <div class="addon-filter">
-                        <ul>
-                            <li data-category="all" class="active"><a href="javascript:void(0)">All</a></li>
-                            <li data-category="addons"><a href="javascript:void(0)">Addons</a></li>
-                            <li data-category="modules"><a href="javascript:void(0)">Modules</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="jms-modal-body">
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="jms-modal" id="layout-modal" tabindex="-1" role="dialog" aria-labelledby="modal-label"
-         aria-hidden="true" style="display: none;">
-        <div class="jms-modal-dialog">
-            <div class="jms-modal-content">
-                <div class="jms-modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3 class="jms-modal-title" id="modal-label"></h3>
-                </div>
-                <div class="jms-modal-body"></div>
-                <div class="jms-modal-footer clearfix">
-                    <a href="javascript:void(0)" class="btn btn-success pull-left" id="save-settings"
-                       data-dismiss="modal">Apply</a>
-                    <button class="btn btn-danger pull-left" data-dismiss="modal" aria-hidden="true">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <div class="hidden">
         <div class="column-settings">
             <div class="form-group">
@@ -706,12 +675,43 @@ if ($header_data['post_content']) {
             </div>
         </div>
     </div>
-
+    <div class="hb-settings-box addon-row-settings">
+        <div class="seting-wrapper">
+            <h3 class="title-setting">
+                <?php esc_html_e('Row settings', 'wr-nitro'); ?>
+            </h3>
+            <a class="hb-settings-close">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
+            <div class="setting-content">
+                <div class="row form-group">
+                    <div class="col-lg-6">
+                        <h5 class="title-field"><?php esc_html_e('Row name', 'jmsheaderbuilder'); ?></h5>
+                        <div class="input-wrapper">
+                            <input type="text" name="name" data-bind="name"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-lg-6">
+                        <h5 class="title-field"><?php esc_html_e('Custom class', 'jmsheaderbuilder'); ?></h5>
+                        <div class="input-wrapper">
+                            <input type="text" name="row-class" data-bind="row-class"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hb-settings-footer">
+                <a href="javascript:void(0)" id="save-settings" class="btn btn-default pull-right">
+                    <?php esc_html_e('Save', 'jmsheaderbuilder'); ?>
+                </a>
+            </div>
+        </div>
+    </div>
     <div class="hb-settings-box addon-text-settings">
         <div class="seting-wrapper">
             <h3 class="title-setting">
-                <?php esc_html_e('Text settings', 'wr-nitro'); ?>
-                <span class="close-setting"></span>
+                <?php esc_html_e('Text settings', 'jmsheaderbuilder'); ?>
             </h3>
             <a class="hb-settings-close">
                 <i class="fa fa-times" aria-hidden="true"></i>
@@ -719,7 +719,7 @@ if ($header_data['post_content']) {
             <div class="setting-content">
                 <div class="row form-group">
                     <div class="col-1">
-                        <h5 class="title-field"><?php esc_html_e('Content', 'wr-nitro'); ?></h5>
+                        <h5 class="title-field"><?php esc_html_e('Content', 'jmsheaderbuilder'); ?></h5>
                         <div class="content-group">
                             <div class="hb-editor" data-editor="text-content">
                                 <?php
@@ -730,28 +730,26 @@ if ($header_data['post_content']) {
                                     )
                                 );
                                 ?>
-                                <input type="hidden" class="hb-editor-hidden setting-input"
-                                       data-bind="hb-text-content"/>
+                                <input type="hidden" name="hb-editor-hidden" data-bind="hb-text-content"/>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col-lg-6">
-                        <h5 class="title-field"><?php esc_html_e('Class', 'wr-nitro'); ?></h5>
-                        <div class="content-group"><input type="text" class="txt-class setting-input"
-                                                          data-bind="className"/></div>
+                        <h5 class="title-field"><?php esc_html_e('Class', 'jmsheaderbuilder'); ?></h5>
+                        <div class="content-group"><input type="text" name="className" data-bind="className"/></div>
                     </div>
                     <div class="col-lg-6">
-                        <h5 class="title-field"><?php esc_html_e('ID', 'wr-nitro'); ?></h5>
-                        <div class="content-group"><input type="text" class="txt-id setting-input" data-bind="ID"/>
+                        <h5 class="title-field"><?php esc_html_e('ID', 'jmsheaderbuilder'); ?></h5>
+                        <div class="content-group"><input type="text" name="ID" data-bind="ID"/>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="hb-settings-footer">
                 <a href="javascript:void(0)" id="save-settings" class="btn btn-default pull-right">
-                    <?php esc_html_e('Save', 'wr-nitro'); ?>
+                    <?php esc_html_e('Save', 'jmsheaderbuilder'); ?>
                 </a>
             </div>
         </div>
@@ -917,14 +915,6 @@ if ($header_data['post_content']) {
                     </div>
                 </div>
                 <div class="row form-group">
-                    <div class="col-lg-6">
-                        <h5 class="title-field">
-                            <?php esc_html_e('Sidebar width', 'jmsheaderbuilder'); ?>
-                        </h5>
-                        <div class="input-wrapper">
-                            <input type="number" value="" name="sidebar-width"/>
-                        </div>
-                    </div>
                     <div class="col-lg-6">
                         <h5 class="title-field">
                             <?php esc_html_e('Icon class', 'jmsheaderbuilder'); ?>
