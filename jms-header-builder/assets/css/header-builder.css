@@ -970,20 +970,38 @@ img{
         background: #fff;
         box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.3);
         display:none;
+        max-height:600px;
+        overflow-y: auto;
     }
-.hb-settings-box.active {
-    display:block;
-}
-.hb-settings-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-}
-.seting-wrapper1 {
-        width: 600px;
-        height:auto;
-        background:#fff;
-        margin: auto;
+    .hb-settings-box.active {
+        display:block;
     }
+    .hb-settings-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+    .hb-settings-footer {
+        margin-top: 20px;
+        padding: 0 15px;
+    }
+    /* Popup Logo */
+        .image-setting .file-image{
+            position: relative;
+        }
+        .input-wrapper input {
+            width: 100%;
+            height: 35px;
+        }
+        .file-image #add-image {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 25px;
+            height:100%;
+            text-align: center;
+            padding: 0;
+        }
+    /* ------ */
 /* ------ */
