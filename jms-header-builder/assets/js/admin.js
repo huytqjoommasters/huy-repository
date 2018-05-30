@@ -137,6 +137,7 @@
         this_setting.find("input[name='logo-letter-spacing']").val(lg_letter_spacing);
         this_setting.find("input[name='className']").val(lg_class_name);
         this_setting.find("input[name='ID']").val(lg_id);
+        $(".wp-color-result").css("background-color", lg_color);
         /* ---- */
         $('.addon-logo-settings #save-settings').data('flag', 'addon-logo-setting');
 
@@ -173,6 +174,9 @@
         $(this).closest('.hb-settings-box').removeClass('show');
         $('.header-item.addon-active').removeClass('addon-active');
         $('.row.row-active').removeClass('.row-active');
+        $(this).closest('.hb-settings-box').find('#logo_img').attr('src', "");
+        $(this).closest('.hb-settings-box').find('#row_bg').attr('src', "");
+        $(this).closest('.hb-settings-box').find('#col_bg').attr('src', "");
     });
 
     function get_popup(id) {
@@ -180,7 +184,7 @@
         var winH = $(window).height();
         var winW = $(window).width();
         var popW = winW * 30 / 100;
-        var popH = id.find('.seting-wrapper').height();
+        var popH = id.height();
         id.css('width', popW);
         id.css('top', winH / 2 - popH / 2);
         id.css('left', winW / 2 - popW / 2);
@@ -196,6 +200,109 @@
         $('.addon-row-settings #save-settings').data('flag', 'row-setting');
         var popup = $('.addon-row-settings');
         get_popup(popup);
+        var this_row = $(this).closest('.row-active');
+        var row_name = this_row.data('name');
+        var row_class = this_row.data('row_class');
+        var row_bg = this_row.data('background_img');
+        var row_bg_size = this_row.data('background_size');
+        var row_bg_repeat = this_row.data('background_repeat');
+        var row_bg_pos = this_row.data('background_position');
+        var row_bg_attac = this_row.data('background_attachment');
+        if (row_bg != "") {
+            $('#row_bg').attr('src', row_bg);
+        }
+        var this_setting = $('.addon-row-settings');
+
+        this_setting.find('#background-size option').each(function() {
+            if ( $(this).val() == row_bg_size ) {
+                $(this).prop('selected', true);
+            }
+        });
+        this_setting.find('#background-repeat option').each(function() {
+            if ( $(this).val() == row_bg_repeat ) {
+                $(this).prop('selected', true);
+            }
+        });
+        this_setting.find('#background-position option').each(function() {
+            if ( $(this).val() == row_bg_pos ) {
+                $(this).prop('selected', true);
+            }
+        });
+        this_setting.find('#background-attachment option').each(function() {
+            if ( $(this).val() == row_bg_attac ) {
+                $(this).prop('selected', true);
+            }
+        });
+        this_setting.find("input[name='name']").val(row_name);
+        this_setting.find("input[name='row-class']").val(row_class);
+        this_setting.find("input[name='background-img']").val(row_bg);
+        this_setting.find("input[name='background-size']").val(row_bg_size);
+        this_setting.find("input[name='background-repeat']").val(row_bg_repeat);
+        this_setting.find("input[name='background-position']").val(row_bg_pos);
+        this_setting.find("input[name='background-attachment']").val(row_bg_attac);
+    });
+    // Column setting button
+    $(document).on('click', '.column-setting', function (event) {
+        event.preventDefault();
+        $('.layout-column').removeClass('column-active');
+        var $parent = $(this).closest('.layout-column');
+        $parent.addClass('column-active');
+        var this_col = $(this).closest('.column-active');
+        var col_class = this_col.data('custom_class');
+        var md_col = this_col.data('md_col');
+        var sm_col = this_col.data('sm_col');
+        var xs_col = this_col.data('xs_col');
+        var col_bg = this_col.data('background_img');
+        var col_bg_size = this_col.data('background_size');
+        var col_bg_repeat = this_col.data('background_repeat');
+        var col_bg_pos = this_col.data('background_position');
+        var col_bg_attac = this_col.data('background_attachment');
+
+        var this_setting = $('.addon-column-settings');
+
+        this_setting.find('#md-col option').each(function() {
+            if ( $(this).val() == md_col ) {
+                $(this).prop('selected', true);
+            }
+        });
+        this_setting.find('#sm-col option').each(function() {
+            if ( $(this).val() == sm_col ) {
+                $(this).prop('selected', true);
+            }
+        });
+        this_setting.find('#xs-col option').each(function() {
+            if ( $(this).val() == xs_col ) {
+                $(this).prop('selected', true);
+            }
+        });
+        if (col_bg != "") {
+            $('#col_bg').attr('src', col_bg);
+        }
+        this_setting.find('#background-size option').each(function() {
+            if ( $(this).val() == col_bg_size ) {
+                $(this).prop('selected', true);
+            }
+        });
+        this_setting.find('#background-repeat option').each(function() {
+            if ( $(this).val() == col_bg_repeat ) {
+                $(this).prop('selected', true);
+            }
+        });
+        this_setting.find('#background-position option').each(function() {
+            if ( $(this).val() == col_bg_pos ) {
+                $(this).prop('selected', true);
+            }
+        });
+        this_setting.find('#background-attachment option').each(function() {
+            if ( $(this).val() == col_bg_attac ) {
+                $(this).prop('selected', true);
+            }
+        });
+        this_setting.find("input[name='col-class']").val(col_class);
+        this_setting.find("input[name='background-img']").val(col_bg);
+        var popup = $('.addon-column-settings');
+        get_popup(popup);
+        $('.addon-column-settings #save-settings').data('flag', 'column-setting');
 
     });
     // Save setting click
@@ -203,31 +310,22 @@
         event.preventDefault();
         var flag = $(this).data('flag');
         switch (flag) {
-            case 'row-setting1':
-                $('#layout-modal').find('.addon-input').each(function () {
-                    var $this = $(this),
-                        $parent = $('.row-active'),
-                        $attrname = $this.data('attrname');
-                    $parent.removeData($attrname);
-                    if ($attrname == 'name') {
-                        var nameVal = $this.val();
-
-                        if (nameVal != '' || $this.val() != null) {
-                            $('.row-active .row-name').text($this.val());
-                        } else {
-                            $('.row-active .row-name').text('Row');
-                        }
-                    }
-                    $parent.attr('data-' + $attrname, $this.getInputValue());
-                });
-                break;
             case 'row-setting':
                 var val1 = $(this).closest('.seting-wrapper').find("input[name='name']").val();
                 var val2 = $(this).closest('.seting-wrapper').find("input[name='row-class']").val();
+                var val3 = $(this).closest('.seting-wrapper').find("input[name='background-img']").val();
+                var val4 = $(this).closest('.seting-wrapper').find("#background-size").val();
+                var val5 = $(this).closest('.seting-wrapper').find("#background-repeat").val();
+                var val6 = $(this).closest('.seting-wrapper').find("#background-position").val();
+                var val7 = $(this).closest('.seting-wrapper').find("#background-attachment").val();
                 var this_row = $('.row-active');
                 this_row.find("input[name='name']").val(val1);
                 this_row.find("input[name='row-class']").val(val2);
-
+                this_row.find("input[name='background-img']").val(val3);
+                this_row.find("input[name='background-size']").val(val4);
+                this_row.find("input[name='background-repeat']").val(val5);
+                this_row.find("input[name='background-position']").val(val6);
+                this_row.find("input[name='background-attachment']").val(val7);
                 this_row.find("> .row-input-group .row-input").each(function(){
                     var $this = $(this);
                     var attrname = $this.data('bind');
@@ -242,8 +340,6 @@
                     }
                     this_row.attr('data-' + attrname, $this.getInputValue());
                 });
-
-
                 this_row.find('.row-input-group .row-input').each(function(){
                     var $this = $(this);
                     var attrname = $this.data('bind');
@@ -257,26 +353,30 @@
                         }
                     }
                     this_row.attr('data-' + attrname, $this.getInputValue());
+                    $this.val("");
                 });
-
+                $('#row_bg').attr('src', "");
                 break;
             case 'column-setting':
-                $('#layout-modal').find('.addon-input').each(function () {
-                    var $this = $(this),
-                        $parent = $('.column-active'),
-                        $attrname = $this.data('attrname');
-                    $parent.removeData($attrname);
-                    $parent.attr('data-' + $attrname, $this.getInputValue());
-                    if ($attrname == 'md_col') {
+                var this_setting = $(this).closest('.seting-wrapper');
+                var this_column = $('.column-active');
+                this_setting.find('.col-input').each(function(){
+                    var $this = $(this);
+                    var attrname = $this.data('bind');
+                    this_column.removeData(attrname);
+                    if(attrname == 'md_col') {
                         $this.updateClass('col-md-');
                     }
-                    if ($attrname == 'sm_col') {
+                    if(attrname == 'sm_col') {
                         $this.updateClass('col-sm-');
                     }
-                    if ($attrname == 'xs_col') {
+                    if(attrname == 'xs_col') {
                         $this.updateClass('col-xs-');
                     }
+                    this_column.attr('data-' + attrname, $this.getInputValue());
+                    $this.val("");
                 });
+                $('#col_bg').attr('src', "");
                 break;
             case 'addon-text-setting':
                 var text_data = tinymce.editors['text-content'].getContent();
@@ -312,6 +412,7 @@
                 this_addon.find("input[name='logo-letter-spacing']").val(val8);
                 this_addon.find("input[name='className']").val(val9);
                 this_addon.find("input[name='ID']").val(val10);
+                $('#logo_img').attr('src', "");
                 break;
             case 'addon-socials-setting':
                 var this_addon = $('.header-item.addon-active');
@@ -343,6 +444,15 @@
         $(this).closest('.hb-settings-box').removeClass('show');
         $('.header-item.addon-active').removeClass('addon-active');
     });
+    $.fn.updateClass = function(str2){
+        $parent = $('.column-active');
+        var classes = $parent.attr('class').split(" ");
+        for (var i = 0, len = classes.length; i < len; i++)
+            if(classes[i].indexOf(str2)!= -1) {
+                $parent.removeClass(classes[i]);
+            }
+        $parent.addClass(this.getInputValue());
+    }
     // logo-type logo-image-url logo-width logo-text logo-color logo-line-height logo-letter-spacing className ID
     //Set Layout Column
     $(document).on('click', '.column-layout', function (event) {
@@ -449,29 +559,6 @@
         }
     });
 
-    // Column setting button
-    $(document).on('click', '.column-setting', function (event) {
-        event.preventDefault();
-        $('.layout-column').removeClass('column-active');
-        var $parent = $(this).closest('.layout-column');
-        $parent.addClass('column-active');
-        $('#layout-modal').find('.jms-modal-body').empty();
-        $('#layout-modal .jms-modal-title').text('Column Settings');
-        $('#layout-modal #save-settings').data('flag', 'column-setting');
-
-        var $clone = $('.column-settings').clone(true);
-        $clone = $('#layout-modal').find('.jms-modal-body').append($clone);
-        $clone.find('.setting-input').each(function () {
-            var $that = $(this),
-                attrValue = $parent.data($that.data('attrname'));
-            if ($that.hasClass('jms-image')) {
-                $that.next().attr('src', $('#root_url').val() + attrValue);
-            }
-            $that.setInputValue({filed: attrValue});
-        });
-
-        $('#layout-modal').modal();
-    });
     //Get color picker
     $(document).ready(function () {
         $('.color-field').wpColorPicker();
@@ -498,10 +585,21 @@
             var attachment = frame.state().get("selection").first();
             $input.val(attachment.attributes.url).trigger("change");
             $('#logo_img').attr('src', $input.val());
+            $('#row_bg').attr('src', $input.val());
+            $('#col_bg').attr('src', $input.val());
         });
         frame.open();
     });
+    $(document).on('click', '.remove-img', function (e) {
+        var this_form = $(this).closest('.form-group');
 
+        this_form.find("input[name='background-img']").val('');
+        this_form.find("#row_bg").attr('src', "");
+
+        this_form.find("input[name='logo-image-url']").val('');
+        this_form.find("#logo_img").attr('src', "");
+    });
+    // ------
     function item_draggable() {
         var row_item = $(".hb-list-element .element-item"),
             row_sortable = $(".layout-column .column");

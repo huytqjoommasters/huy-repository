@@ -184,7 +184,6 @@ class JmsHeaderBuilder_Admin
         $header_obj = get_post($header_id);
         $header_data = unserialize($header_obj->post_content);
         foreach ($header_data as $row) {
-            print_r($row);
             if ($row['settings']['active'] != 0) {
                 ?>
                 <div class="jms-row">
