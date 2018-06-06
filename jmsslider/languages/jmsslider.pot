@@ -1,0 +1,800 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: Jms Slider Layer\n"
+"POT-Creation-Date: 2017-12-07 17:25+0700\n"
+"PO-Revision-Date: 2017-12-07 17:24+0700\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.5\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: jmsslider.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: admin/edit_slide.php:28
+msgid "Edit Slide"
+msgstr ""
+
+#: admin/edit_slide.php:29 admin/layers.php:73
+msgid "Back to Slides List"
+msgstr ""
+
+#: admin/edit_slide.php:44
+msgid "General"
+msgstr ""
+
+#: admin/edit_slide.php:46
+msgid "Slide Title"
+msgstr ""
+
+#: admin/edit_slide.php:47
+msgid "Enter your Slide Name here"
+msgstr ""
+
+#: admin/edit_slide.php:50
+msgid "Slide Class Suffix"
+msgstr ""
+
+#: admin/edit_slide.php:51
+msgid "Enter your Slide Class here"
+msgstr ""
+
+#: admin/edit_slide.php:54
+msgid "Slide Link"
+msgstr ""
+
+#: admin/edit_slide.php:55
+msgid "Enter your Slide Link here"
+msgstr ""
+
+#: admin/edit_slide.php:59
+msgid "Background"
+msgstr ""
+
+#: admin/edit_slide.php:61
+msgid "Background Image"
+msgstr ""
+
+#: admin/edit_slide.php:62
+msgid "Image"
+msgstr ""
+
+#: admin/edit_slide.php:64
+msgid "Select Images"
+msgstr ""
+
+#: admin/edit_slide.php:65
+msgid "Preview"
+msgstr ""
+
+#: admin/edit_slide.php:68
+msgid "Background Color"
+msgstr ""
+
+#: admin/edit_slide.php:69
+msgid "Color"
+msgstr ""
+
+#: admin/edit_slide.php:120
+msgid "The slide was updated successfully"
+msgstr ""
+
+#: admin/edit_slide.php:125 admin/layers.php:64
+msgid "Error in update process"
+msgstr ""
+
+#: admin/edit_slide.php:142
+msgid "The slide was added successfully"
+msgstr ""
+
+#: admin/edit_slide.php:147 admin/edit_slider.php:644
+msgid "Error in add process"
+msgstr ""
+
+#: admin/edit_slide.php:152 admin/edit_slider.php:648
+msgid "Please fill all the required fields"
+msgstr ""
+
+#: admin/edit_slider.php:24
+msgid "Slider title and shortcode"
+msgstr ""
+
+#: admin/edit_slider.php:25 admin/list_slides.php:29
+msgid "Back to Slider List"
+msgstr ""
+
+#: admin/edit_slider.php:30
+msgid "Enter your Slider Name here"
+msgstr ""
+
+#: admin/edit_slider.php:31
+msgid "The title of the slider, example: Slider 1"
+msgstr ""
+
+#: admin/edit_slider.php:34
+msgid "Enter your Slider Alias here"
+msgstr ""
+
+#: admin/edit_slider.php:35
+msgid "The alias for embedding your slider, example: slider1"
+msgstr ""
+
+#: admin/edit_slider.php:39
+msgid "Place the shortcode where you want to show the slider"
+msgstr ""
+
+#: admin/edit_slider.php:41
+msgid "SAVE"
+msgstr ""
+
+#: admin/edit_slider.php:133
+msgid "Slider Settings"
+msgstr ""
+
+#: admin/edit_slider.php:135
+msgid "Start after"
+msgstr ""
+
+#: admin/edit_slider.php:138
+msgid "Default delay for elements"
+msgstr ""
+
+#: admin/edit_slider.php:146
+msgid "Duration"
+msgstr ""
+
+#: admin/edit_slider.php:149
+msgid "default timeout before switching slides"
+msgstr ""
+
+#: admin/edit_slider.php:157
+msgid "Position X"
+msgstr ""
+
+#: admin/edit_slider.php:160
+msgid "Default X position"
+msgstr ""
+
+#: admin/edit_slider.php:168
+msgid "Position Y"
+msgstr ""
+
+#: admin/edit_slider.php:171
+msgid "Default Y position"
+msgstr ""
+
+#: admin/edit_slider.php:179
+msgid "Transition All"
+msgstr ""
+
+#: admin/edit_slider.php:182
+msgid "Default Transition for All"
+msgstr ""
+
+#: admin/edit_slider.php:193 admin/layers.php:392
+msgid "Transition In"
+msgstr ""
+
+#: admin/edit_slider.php:196
+msgid "Default Transition In"
+msgstr ""
+
+#: admin/edit_slider.php:207 admin/layers.php:407
+msgid "Transition Out"
+msgstr ""
+
+#: admin/edit_slider.php:210
+msgid "Default Transition Out"
+msgstr ""
+
+#: admin/edit_slider.php:221 admin/layers.php:435
+msgid "Ease In"
+msgstr ""
+
+#: admin/edit_slider.php:224
+msgid "Default Easing In"
+msgstr ""
+
+#: admin/edit_slider.php:235 admin/layers.php:449
+msgid "Ease Out"
+msgstr ""
+
+#: admin/edit_slider.php:238
+msgid "Default Easing Out"
+msgstr ""
+
+#: admin/edit_slider.php:249
+msgid "Speed In"
+msgstr ""
+
+#: admin/edit_slider.php:252
+msgid "Default in - transition speed"
+msgstr ""
+
+#: admin/edit_slider.php:260
+msgid "Speed Out"
+msgstr ""
+
+#: admin/edit_slider.php:263
+msgid "Default out - transition speed"
+msgstr ""
+
+#: admin/edit_slider.php:274
+msgid "Plugin Method"
+msgstr ""
+
+#: admin/edit_slider.php:276
+msgid "Max Width"
+msgstr ""
+
+#: admin/edit_slider.php:279
+msgid "Slide Width in Pixel"
+msgstr ""
+
+#: admin/edit_slider.php:286
+msgid "Max Height"
+msgstr ""
+
+#: admin/edit_slider.php:289
+msgid "Slide Height in Pixel"
+msgstr ""
+
+#: admin/edit_slider.php:296 admin/edit_slider.php:299
+msgid "Bacground Animate"
+msgstr ""
+
+#: admin/edit_slider.php:303 admin/edit_slider.php:339
+#: admin/edit_slider.php:350 admin/edit_slider.php:362
+#: admin/edit_slider.php:373 admin/edit_slider.php:384
+#: admin/edit_slider.php:395 admin/edit_slider.php:406 admin/layers.php:538
+#: admin/layers.php:545 admin/layers.php:554 admin/layers.php:562
+msgid "Yes"
+msgstr ""
+
+#: admin/edit_slider.php:304 admin/edit_slider.php:340
+#: admin/edit_slider.php:351 admin/edit_slider.php:363
+#: admin/edit_slider.php:374 admin/edit_slider.php:385
+#: admin/edit_slider.php:396 admin/edit_slider.php:407 admin/layers.php:539
+#: admin/layers.php:546 admin/layers.php:555 admin/layers.php:561
+msgid "No"
+msgstr ""
+
+#: admin/edit_slider.php:307
+msgid "Background Ease"
+msgstr ""
+
+#: admin/edit_slider.php:310
+msgid "Default background animation easing"
+msgstr ""
+
+#: admin/edit_slider.php:321
+msgid "End animate slide"
+msgstr ""
+
+#: admin/edit_slider.php:324
+msgid ""
+"if set true, objects will transition out at slide end (before the "
+"slideTransition is called)"
+msgstr ""
+
+#: admin/edit_slider.php:328
+msgid "On"
+msgstr ""
+
+#: admin/edit_slider.php:329
+msgid "Off"
+msgstr ""
+
+#: admin/edit_slider.php:332
+msgid "FullWidth slide"
+msgstr ""
+
+#: admin/edit_slider.php:335
+msgid "transition over the full width of the window"
+msgstr ""
+
+#: admin/edit_slider.php:343
+msgid "FullHeight slide"
+msgstr ""
+
+#: admin/edit_slider.php:346
+msgid "transition over the full height of the window"
+msgstr ""
+
+#: admin/edit_slider.php:355
+msgid "Responsive"
+msgstr ""
+
+#: admin/edit_slider.php:358
+msgid "Activates the responsive slider"
+msgstr ""
+
+#: admin/edit_slider.php:366 admin/edit_slider.php:369
+msgid "Auto change slide"
+msgstr ""
+
+#: admin/edit_slider.php:377
+msgid "Pause hover"
+msgstr ""
+
+#: admin/edit_slider.php:380
+msgid "Pauses slider on hover (current step will still be completed)"
+msgstr ""
+
+#: admin/edit_slider.php:388
+msgid "Show pager"
+msgstr ""
+
+#: admin/edit_slider.php:391
+msgid "Pager controls on/off"
+msgstr ""
+
+#: admin/edit_slider.php:399
+msgid "Show controls"
+msgstr ""
+
+#: admin/edit_slider.php:402
+msgid "Controls on/off"
+msgstr ""
+
+#: admin/edit_slider.php:601
+msgid "This Alias is exist, please fill other Alias"
+msgstr ""
+
+#: admin/edit_slider.php:620
+msgid "The slider was updated successfully"
+msgstr ""
+
+#: admin/edit_slider.php:639
+msgid "The slider was added successfully"
+msgstr ""
+
+#: admin/layers.php:59
+msgid "The slide layers was updated successfully"
+msgstr ""
+
+#: admin/layers.php:67
+msgid "Data is same"
+msgstr ""
+
+#: admin/layers.php:72 admin/list_slides.php:36 admin/list_slides.php:51
+msgid "Layers Manager"
+msgstr ""
+
+#: admin/layers.php:76
+msgid "Add Text Layer"
+msgstr ""
+
+#: admin/layers.php:77
+msgid "Add Image Layer"
+msgstr ""
+
+#: admin/layers.php:78 admin/layers.php:225
+msgid "Add Video"
+msgstr ""
+
+#: admin/layers.php:79 admin/layers.php:185 admin/layers.php:202
+msgid "Add Link"
+msgstr ""
+
+#: admin/layers.php:80
+msgid "Save"
+msgstr ""
+
+#: admin/layers.php:81
+msgid "Delete Layer"
+msgstr ""
+
+#: admin/layers.php:82
+msgid "Duplicate Layer"
+msgstr ""
+
+#: admin/layers.php:127
+msgid "Slide Time"
+msgstr ""
+
+#: admin/layers.php:152
+msgid "Add text or html"
+msgstr ""
+
+#: admin/layers.php:157 admin/layers.php:190 admin/layers.php:216
+#: admin/layers.php:285
+msgid "Title"
+msgstr ""
+
+#: admin/layers.php:161
+msgid "Text or HTML"
+msgstr ""
+
+#: admin/layers.php:176
+msgid "Add Layer"
+msgstr ""
+
+#: admin/layers.php:194
+msgid "Link Text"
+msgstr ""
+
+#: admin/layers.php:198
+msgid "Url"
+msgstr ""
+
+#: admin/layers.php:211
+msgid "Add Video (Youtube or Vimeo)"
+msgstr ""
+
+#: admin/layers.php:220
+msgid "Video Url"
+msgstr ""
+
+#: admin/layers.php:281
+msgid "Layer Setting"
+msgstr ""
+
+#: admin/layers.php:289
+msgid "Class Suffix"
+msgstr ""
+
+#: admin/layers.php:292
+msgid ""
+"Add Class Suffix for layer when you want to style for layer, add css style "
+"in style.css file"
+msgstr ""
+
+#: admin/layers.php:299
+msgid "Delay"
+msgstr ""
+
+#: admin/layers.php:302
+msgid ""
+"Time in ms before the in transition starts (in the current step / see steps)"
+msgstr ""
+
+#: admin/layers.php:309
+msgid "Time"
+msgstr ""
+
+#: admin/layers.php:312
+msgid ""
+"Time after which the elements animation is complete. It will start at the "
+"beginning of the slide/step, or after its specificed delay"
+msgstr ""
+
+#: admin/layers.php:319
+msgid "Step"
+msgstr ""
+
+#: admin/layers.php:322
+msgid ""
+"You can group your elements in different steps. All animation of one step "
+"will start at the same time (maybe with your choosen element-specific data-"
+"delay). Elements of the next step will not start before the previous step is "
+"finished. If an element has no data-step attribute the plugin will thread it "
+"as having data-step=”0″."
+msgstr ""
+
+#: admin/layers.php:335
+msgid "Data X"
+msgstr ""
+
+#: admin/layers.php:338
+msgid "Data X Position, Left Offset In Pixel"
+msgstr ""
+
+#: admin/layers.php:345
+msgid "Data Y"
+msgstr ""
+
+#: admin/layers.php:348
+msgid "Data Y Position, Top Offset In Pixel"
+msgstr ""
+
+#: admin/layers.php:355
+msgid "Z-Index"
+msgstr ""
+
+#: admin/layers.php:358
+msgid "Layer has Z-Index bigger then over to Layer has Z_index Less than"
+msgstr ""
+
+#: admin/layers.php:365
+msgid "Data Align"
+msgstr ""
+
+#: admin/layers.php:368
+msgid ""
+"Align for Layer, Left : data X Will = 0, Right Data X will = 100%, Center "
+"Data X will = ([slide width] - [object x])/2.Note : When use Data Align Data "
+"X will not avaiable."
+msgstr ""
+
+#: admin/layers.php:373 admin/layers.php:430 admin/layers.php:511
+msgid "none"
+msgstr ""
+
+#: admin/layers.php:374
+msgid "Left"
+msgstr ""
+
+#: admin/layers.php:375
+msgid "Right"
+msgstr ""
+
+#: admin/layers.php:376
+msgid "Center"
+msgstr ""
+
+#: admin/layers.php:380
+msgid "Align Offset"
+msgstr ""
+
+#: admin/layers.php:383
+msgid ""
+"Align Offset : Offset from align direction (Left, Right, Center). If set "
+"align \"Right\" it will offset with right side, if set align \"Left\" it "
+"will offset with left side, if set align \"Center\" it will offset with "
+"center of slider, example -30 will shift to left 30px, 30 will shift to "
+"right 30px."
+msgstr ""
+
+#: admin/layers.php:395
+msgid ""
+"type of the in-animation (default is left) possible values: fade, none ,"
+"left, topLeft, bottomLeft, right, topRight, bottomRight, top, bottom. none "
+"lets the element just appear/disappear at the desired location\n"
+"the direction-type values define the direction in which the element is "
+"animated."
+msgstr ""
+
+#: admin/layers.php:410
+msgid ""
+"type of the out-animation (default is left) possible values: fade, none ,"
+"left, topLeft, bottomLeft, right, topRight, bottomRight, top, bottom. none "
+"lets the element just appear/disappear at the desired location\n"
+"the direction-type values define the direction in which the element is "
+"animated."
+msgstr ""
+
+#: admin/layers.php:422
+msgid "Data Special"
+msgstr ""
+
+#: admin/layers.php:425
+msgid ""
+"The only value currently available for data-special is cycle.cycle will "
+"trigger the out transition for the previous element in the current step."
+"(remember to use data-delay for elements with cycle, or they will start at "
+"the same time the element to cycle starts – that will break the whole fun)"
+msgstr ""
+
+#: admin/layers.php:431
+msgid "cycle"
+msgstr ""
+
+#: admin/layers.php:438
+msgid "easing for the in-animation"
+msgstr ""
+
+#: admin/layers.php:452
+msgid "easing for the out-animation"
+msgstr ""
+
+#: admin/layers.php:467
+msgid "Font Size"
+msgstr ""
+
+#: admin/layers.php:471
+msgid "Text Color"
+msgstr ""
+
+#: admin/layers.php:475
+msgid "Letter Spacing"
+msgstr ""
+
+#: admin/layers.php:478
+msgid "Spacing between character in px. recomment min 0.0 , max 10px"
+msgstr ""
+
+#: admin/layers.php:487
+msgid "Font Style"
+msgstr ""
+
+#: admin/layers.php:489
+msgid "normal"
+msgstr ""
+
+#: admin/layers.php:490
+msgid "Italic"
+msgstr ""
+
+#: admin/layers.php:491
+msgid "Oblique"
+msgstr ""
+
+#: admin/layers.php:495
+msgid "Font Weight"
+msgstr ""
+
+#: admin/layers.php:497
+msgid "100"
+msgstr ""
+
+#: admin/layers.php:498
+msgid "200"
+msgstr ""
+
+#: admin/layers.php:499
+msgid "300"
+msgstr ""
+
+#: admin/layers.php:500
+msgid "400(normal)"
+msgstr ""
+
+#: admin/layers.php:501
+msgid "500"
+msgstr ""
+
+#: admin/layers.php:502
+msgid "600"
+msgstr ""
+
+#: admin/layers.php:503
+msgid "700(bold)"
+msgstr ""
+
+#: admin/layers.php:504
+msgid "800"
+msgstr ""
+
+#: admin/layers.php:505
+msgid "900"
+msgstr ""
+
+#: admin/layers.php:509
+msgid "Text Transform"
+msgstr ""
+
+#: admin/layers.php:512
+msgid "uppercase"
+msgstr ""
+
+#: admin/layers.php:513
+msgid "lowercase"
+msgstr ""
+
+#: admin/layers.php:514
+msgid "capitalize"
+msgstr ""
+
+#: admin/layers.php:520
+msgid "Text"
+msgstr ""
+
+#: admin/layers.php:526
+msgid "Link Url"
+msgstr ""
+
+#: admin/layers.php:532
+msgid "Video Layer Setting"
+msgstr ""
+
+#: admin/layers.php:536
+msgid "Auto Play"
+msgstr ""
+
+#: admin/layers.php:543
+msgid "Loop"
+msgstr ""
+
+#: admin/layers.php:552
+msgid "Controls"
+msgstr ""
+
+#: admin/layers.php:559
+msgid "Video Background"
+msgstr ""
+
+#: admin/layers.php:568
+msgid "Width"
+msgstr ""
+
+#: admin/layers.php:572
+msgid "Height"
+msgstr ""
+
+#: admin/layers.php:589 admin/list_slider.php:60 admin/list_slides.php:58
+msgid "Usage"
+msgstr ""
+
+#: admin/layers.php:589
+msgid "Click to Layer box or timeline to set for Layer active."
+msgstr ""
+
+#: admin/list_slider.php:26
+msgid "Slider list"
+msgstr ""
+
+#: admin/list_slider.php:27
+msgid "Add New Slider"
+msgstr ""
+
+#: admin/list_slider.php:32 admin/list_slides.php:34
+msgid "ID"
+msgstr ""
+
+#: admin/list_slider.php:33 admin/list_slides.php:35
+msgid "Name"
+msgstr ""
+
+#: admin/list_slider.php:34
+msgid "Shortcode"
+msgstr ""
+
+#: admin/list_slider.php:35 admin/list_slider.php:53
+msgid "Slides Manager"
+msgstr ""
+
+#: admin/list_slider.php:36 admin/list_slider.php:54 admin/list_slides.php:37
+#: admin/list_slides.php:52
+msgid "Edit"
+msgstr ""
+
+#: admin/list_slider.php:37 admin/list_slider.php:55 admin/list_slides.php:38
+#: admin/list_slides.php:53
+msgid "Delete"
+msgstr ""
+
+#: admin/list_slider.php:60
+msgid "Copy & paste the shortcode directly into any WordPress post or page"
+msgstr ""
+
+#: admin/list_slides.php:27
+msgid "Slide List"
+msgstr ""
+
+#: admin/list_slides.php:28
+msgid "Add New Slide"
+msgstr ""
+
+#: admin/list_slides.php:58
+msgid "Drag & Drop Row to change Slide order"
+msgstr ""
+
+#: admin/list_slides.php:76
+msgid "Slides ordering was updated successfully"
+msgstr ""
+
+#: jmsslider.php:170 jmsslider.php:202
+msgid "Error On Remove Process"
+msgstr ""
+
+#: jmsslider.php:173 jmsslider.php:205
+msgid "Item Deleted"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Jms Slider Layer"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+#. Author URI of the plugin/theme
+msgid "http://joommasters.com"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Responsive Wordpress Slider Plugin"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Joommasters"
+msgstr ""
