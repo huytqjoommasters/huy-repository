@@ -30,7 +30,7 @@ $slide = $wpdb->get_row( "SELECT * FROM " . $wpdb->prefix . "jms_slider_slides W
 	</h2>
 	<?php
 	if($id) {
-		$json = $slide->params; 
+		$json = $slide->params;
 		$j_setting = json_decode($json);
 		$class = $j_setting->class;	
 		$slide_link = isset($j_setting->slide_link) ? $j_setting->slide_link : '';	
@@ -39,22 +39,22 @@ $slide = $wpdb->get_row( "SELECT * FROM " . $wpdb->prefix . "jms_slider_slides W
 		$bg_image = isset($j_setting->bg_image) ? $j_setting->bg_image : '';	
 	}	
 	?>		
-	<form action="#" method="POST" class="edit-form">		
+	<form action="#" method="POST" class="edit-form">
 		<div class="option-block col-6">
 			<h3><?php echo esc_html_e( 'General', 'jmsslider' );?></h3>
 			<div class="row-input">
 				<label for="bg_type"><?php echo esc_html_e( 'Slide Title', 'jmsslider' );?></label>
-				<input type="text" name="title" value="<?php if(!empty($slide->title)) {echo $slide->title;} else {echo 'New slide';} ?>" placeholder="<?php echo esc_html_e( 'Enter your Slide Name here', 'jmsslider' );?>" autofocus="autofocus">			
+				<input type="text" name="title" value="<?php if(!empty($slide->title)) {echo $slide->title;} else {echo 'New slide';} ?>" placeholder="<?php echo esc_html_e( 'Enter your Slide Name here', 'jmsslider' );?>" autofocus="autofocus">
 			</div>
 			<div class="row-input">
 				<label for="bg_type"><?php echo esc_html_e( 'Slide Class Suffix', 'jmsslider' );?></label>
-				<input type="text" name="class" value="<?php if(!empty($class)) {echo $class;} else {echo '';} ?>" placeholder="<?php echo esc_html_e( 'Enter your Slide Class here', 'jmsslider' );?>" />			
+				<input type="text" name="class" value="<?php if(!empty($class)) {echo $class;} else {echo '';} ?>" placeholder="<?php echo esc_html_e( 'Enter your Slide Class here', 'jmsslider' );?>" />
 			</div>
 			<div class="row-input">
 				<label for="bg_type"><?php echo esc_html_e( 'Slide Link', 'jmsslider' );?></label>
-				<input type="text" name="slide_link" value="<?php if(isset($slide_link) && !empty($slide_link)) {echo $slide_link;} else {echo '#';} ?>" placeholder="<?php echo esc_html_e( 'Enter your Slide Link here', 'jmsslider' );?>" />			
-			</div>	
-		</div>		
+				<input type="text" name="slide_link" value="<?php if(isset($slide_link) && !empty($slide_link)) {echo $slide_link;} else {echo '#';} ?>" placeholder="<?php echo esc_html_e( 'Enter your Slide Link here', 'jmsslider' );?>" />
+			</div>
+		</div>
 		<div class="option-block col-6">
 			<h3><?php echo esc_html_e( 'Background', 'jmsslider' );?></h3>
 			<div class="row-input image">
@@ -69,7 +69,7 @@ $slide = $wpdb->get_row( "SELECT * FROM " . $wpdb->prefix . "jms_slider_slides W
 				<input type="radio" id="bg_color" name="bg_type" value="color" <?php if(isset($bg_type) && $bg_type == 'color') {?>checked="checked"<?php } ?>> <?php echo esc_html_e( 'Color', 'jmsslider' );?>
 				<input style="display:inline-block;" type="text" class="pick_color" name="bg_color" id="bg_color" value="<?php if(isset($bg_color) && !empty($bg_color)) { echo $bg_color; }?>" data-default-color="#ffffff">
 			</div>
-		</div>	
+		</div>
 		<input type="submit" name="submit" class="btn btn-success fixed-right" value="Save">
 		<input type="hidden" name="id_slide" value="<?php echo $id; ?>">
 		<input type="hidden" name="id_slider" value="<?php echo $id_slider; ?>">

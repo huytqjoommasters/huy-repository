@@ -17,7 +17,8 @@
 }
 .jmsslider .btn-tool {	
 	line-height: 35px;
-	display: inline-block;
+	min-height: 35px;
+	display: flex;
 	color: #444;
 	border:  1px solid #efefef;	
 	text-decoration: none;
@@ -1157,9 +1158,71 @@
 	visibility: visible;
 }
 #quick-layers-list {
-	padding: 5px 10px;
+	padding: 5px 0;
 }
 #quick-layers-list li {
 	cursor: pointer;
 	line-height: 1.2;
+	margin:0;
+	padding: 5px 15px;
+}
+#quick-layers-list li.active {
+	background: #57c267;
+	color:#fff;
+}
+
+/**/
+.list-slides li{
+	display: inline-block;
+	position: relative;
+	margin:0 5px;
+	overflow: hidden;
+}
+.list-slides li .slide-bg {
+	display: block;
+	width: 200px;
+	height: 130px;
+}
+.list-slides li .slide-title {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	z-index: 1;
+	background: #000;
+	color: #fff;
+	padding: 5px 10px;
+}
+.list-slides li .edit-slide {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	display: inline-block;
+	z-index: 2;
+	text-decoration: none;
+	color: #fff;
+}
+.list-slides li .dashicons {
+	font-size: 27px;
+	width: 27px;
+	height: 27px;
+}
+
+.col-5 {
+	width: 40%;
+}
+
+.wrap.jmsslider {
+	float: left;
+	width: 100%;
+}
+.jmsslider-setting .slide-title {
+	margin-bottom: 20px;
+}
+.jmsslider-setting .slide-title label {
+	width: 20%;
+	display: inline-block;
+}
+.wp-picker-holder {
+	position: absolute;
 }

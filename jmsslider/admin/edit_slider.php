@@ -19,6 +19,9 @@ if(isset($_GET['id']))
 	$id = (int)$_GET['id'];
 $slider_row = $wpdb->get_row( "SELECT * FROM " . $wpdb->prefix . "jms_sliders WHERE id_slider = ".$id."" );
 $slider_list_safe_link = wp_nonce_url( 'admin.php?page=jmssliderlayer');
+
+$_query = "SELECT *  FROM " . $wpdb->prefix . "jms_slider_slides WHERE id_slider = '" . $id . "'";
+$slide = $wpdb->get_results($_query);
 ?>
 <div class="wrap jmsslider">
 	<h2><?php echo esc_html_e( 'Slider title and shortcode', 'jmsslider' );?>
@@ -40,6 +43,32 @@ $slider_list_safe_link = wp_nonce_url( 'admin.php?page=jmssliderlayer');
 			</div>
 			<button type="submit" class="btn btn-success fixed-right"><?php echo esc_html_e( 'SAVE', 'jmsslider' );?></button>
 		</div><!-- add slider -->
+        <ul class="list-slides">
+        <?php
+            foreach ($slide as $slide_item ) {
+                //print_r($slide_item);
+                $_params = json_decode($slide_item->params);
+                $bg_image = $_params->bg_image;
+                $bg_color = $_params->bg_color;
+                $bg_type = $_params->bg_type;
+                $layers_safe_link = wp_nonce_url( 'admin.php?page=jmssliderlayer&task=layers&id=' . esc_html( $slide_item->id_slide ), 'layers_' . $slide_item->id_slide, 'layers_nonce' );
+                ?>
+            <li class="item-slide">
+                <?php if($bg_type == 'image') { ?>
+                    <span class="slide-bg"
+                          style="<?php if( isset($bg_image) && $bg_image != ""){?> background-image: url(<?php echo site_url().$bg_image; ?>);<?php } ?> background-size:cover;"></span>
+                <?php } else { ?>
+                    <span class="slide-bg" <?php if( isset($bg_color) && $bg_color != ""){ ?>style="background-color:<?php echo $bg_color; ?>; background-image: none;"<?php } ?> ></span>
+                <?php } ?>
+                <div class="slide-title">
+                    <?php echo $slide_item->title;?>
+                </div>
+                <a href="<?php echo $layers_safe_link;?>" class="edit-slide"><i class="dashicons dashicons-edit"></i></a>
+            </li>
+        <?php
+            }
+        ?>
+        </ul>
 		<?php
 		if(isset($slider_row)) {
 			$json = $slider_row->settings; 
@@ -64,7 +93,7 @@ $slider_list_safe_link = wp_nonce_url( 'admin.php?page=jmssliderlayer');
 		?>
 		<div class="setting-wrap">
 			<h3><?php echo esc_html_e( 'Slider Settings', 'jmsslider' );?></h3>
-			<div class="option-block col-6">
+			<div class="option-block col-5">
 				<div class="form-group has-background">
 					<label for="JMS_SLIDER_DELAY"><?php echo esc_html_e( 'Start after', 'jmsslider' );?>
 						<div class="help">?
@@ -140,7 +169,7 @@ $slider_list_safe_link = wp_nonce_url( 'admin.php?page=jmssliderlayer');
 					<input id="JMS_SLIDER_FULL_HEIGHT_off" name="JMS_SLIDER_FULL_HEIGHT" value="0" type="radio" <?php if(isset($full_height) && (int)$full_height == 0) echo 'checked="checked"';?>> <?php echo esc_html_e( 'No', 'jmsslider' );?>
 				</div>
 			</div>
-			<div class="option-block col-6">
+			<div class="option-block col-5">
 				
 				<div class="form-group has-background">
 					<label for="JMS_SLIDER_RESPONSIVE"><?php echo esc_html_e( 'Responsive', 'jmsslider' );?>

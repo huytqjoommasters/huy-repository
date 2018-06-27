@@ -18,12 +18,12 @@ if ( ! defined( 'ABSPATH' )) {
 	<div class="responisve-container">
 		<div class="slider">
 			<div class="fs_loader"></div>
-			<?php 
+			<?php
 				global $wpdb;
 				$q = "SELECT *  FROM " . $wpdb->prefix . "jms_sliders WHERE alias = '".$alias."'";
-				$slider = $wpdb->get_row( $q );					
+				$slider = $wpdb->get_row( $q );
 				$q = "SELECT *  FROM ". $wpdb->prefix ."jms_slider_slides WHERE id_slider = ".$slider->id_slider." ORDER BY slide_order ASC";
-				$slides = $wpdb->get_results( $q );		
+				$slides = $wpdb->get_results( $q );
 				$setting = json_decode($slider->settings, true);
 			?>
 

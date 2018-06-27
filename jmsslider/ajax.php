@@ -5,7 +5,6 @@
 		$id_slider  = $_POST['id_slider'];
 		$data_type  = $_POST['data_type'];
 		$data_title = $_POST['data_title'];
-
 		$a_layer = array(
 			'title'           => $data_title,
 			'class_surffix'   => '',

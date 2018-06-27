@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-    var datakeys = ['title', 'type', 'text', 'url', 'class', 'delay', 'time', 'x', 'y', 'layerwidthtext', 'layerheighttext', 'z_index', 'width', 'height', 'in', 'out', 'ease_in', 'ease_out', 'transform_in', 'transform_out', 'step', 'special', 'autoplay', 'loop', 'controls', 'videobg', 'videotype', 'videoid', 'fontsize', 'textcolor', 'align', 'offset', 'fontstyle', 'fontweight', 'link', 'letterspacing', 'texttransform', 'mx', 'my', 'mletterspacing', 'malign', 'mfontsize', 'moffset', 'mfontweight', 'mtexttransform', 'mlineheight',];
+    var datakeys = ['title', 'type', 'text', 'url', 'attachment_id', 'visibility', 'class', 'delay', 'time', 'x', 'y', 'layerwidthtext', 'layerheighttext', 'z_index', 'width', 'height', 'in', 'out', 'ease_in', 'ease_out', 'transform_in', 'transform_out', 'step', 'special', 'autoplay', 'loop', 'controls', 'videobg', 'videotype', 'videoid', 'fontsize', 'textcolor', 'align', 'offset', 'fontstyle', 'fontweight', 'link', 'letterspacing', 'texttransform', 'mx', 'my', 'mletterspacing', 'malign', 'mfontsize', 'moffset', 'mfontweight', 'mtexttransform', 'mlineheight',];
     jQuery('.jms-delete-item').click(function () {
         var c = confirm('Are you sure want to delete this item?');
         if (!c) {
@@ -38,9 +38,14 @@ jQuery(document).ready(function ($) {
         //When an image is selected in media frame...
         frame.on('select', function () {
             var attachment = frame.state().get('selection').first().toJSON();
-            var media_url = attachment['url'].replace($('#site_url').val(), "");
+            var media_url = attachment['url'].replace($('#root_url').val(), "");
             jQuery('#image_url').val(media_url);
             displayImg.append('<img src="' + attachment.url + '" alt="" style="width: 100%" />');
+            var ip_type = jQuery("input[name='bg_type']:checked").val();
+            if( ip_type == 'image' ) {
+                jQuery("#frame_layer").css( "background-color", 'none' );
+                jQuery("#frame_layer").css( "background-image", 'url('+ attachment['url'] +')' );
+            }
         });
         frame.open();
     });
@@ -94,56 +99,368 @@ jQuery(document).ready(function ($) {
     jQuery('#button_show_all_layer > i.dashicons-menu').click(function (event) {
         jQuery(this).closest('.layers-list').find('#quick-layers-wrapper').toggleClass('show-list');
     });
-    jQuery(document).ready(function () {
-        layerListClick();
+    jQuery(document).ready(function(){
 
-        jQuery("#edit-layer-btn").data('flag', $("#frame_layer .active").data("type") );
-        jQuery("#edit-layer-btn").click(function () {
-            var flag = $(this).data('flag');
-            switch (flag){
+        jQuery("#layer_type").val( jQuery("#frame_layer .active").data("type") );
+        jQuery("#layer_title").val( jQuery("#frame_layer .active").data("title") );
+        jQuery("#layer_text").val( jQuery("#frame_layer .active").data("text") );
+        if (jQuery("#layer_type").val() == 'image') {
+            jQuery("#layer_attachment_id").val(jQuery("#frame_layer .active").data("attachment_id"));
+        }
+        if (jQuery("#layer_type").val() == 'link') {
+            jQuery("#layer_url").val(jQuery("#frame_layer .active").data("link"));
+        }
+
+        if( bg_type == 'image') {
+            jQuery("#bg_image").prop('checked', true);
+        } else {
+            jQuery("#bg_color").prop('checked', true);
+        }
+        jQuery("input[name='bg_type']").change(function(){
+            var ip_var = jQuery("input[name='bg_type']:checked").val();
+            if (ip_var == "color") {
+                var ip_color = jQuery(this).closest('.row-input').find("#bg_color.wp-color-picker").val();
+                jQuery("#frame_layer").css("background-image", 'none');
+                if( ip_color != "" ) {
+                    jQuery("#frame_layer").css( "background-color", ip_color );
+                }
+                jQuery('.pick_color').wpColorPicker({
+                    change: function (event, ui) {
+                        var element = event.target;
+                        var color = ui.color.toString();
+                        jQuery("#frame_layer").css( "background-color", color );
+                    },
+                });
+            } else {
+                var ip_bg = jQuery("#image_url").val();
+                var root_url = jQuery("#root_url").val();
+                var img_url = root_url + ip_bg;
+                alert(img_url);
+                if( ip_bg != "" ) {
+                    jQuery("#frame_layer").css( "background-image", 'url('+img_url+')' );
+                    jQuery("#frame_layer").css( "background-color", 'none' );
+                }
+            }
+        });
+
+        jQuery("#edit-layer-btn").on('click', function (e) {
+            e.preventDefault();
+            jQuery('#quick-layers-wrapper').removeClass('show-list');
+            var flag = jQuery("#layer_type").val();
+            switch (flag) {
                 case 'text':
-                    $('.jms-wrap-model.add_text_layer').show('400');
+                    var this_setting = $('.jms-wrap-model.add_text_layer');
+                    this_setting.find('#submitLayerText').hide();
+                    this_setting.find('#updateLayerText').show();
+                    this_setting.find('#title_text_new').val("");
+                    this_setting.find('#text_layer').val("");
+                    this_setting.find('#title_text_new').val(jQuery('#layer_title').val());
+                    this_setting.find('#text_layer').val(jQuery('#layer_text').val());
+                    jQuery('.jms-wrap-model.add_text_layer').show('400');
+                    jQuery("#updateLayerText").click(function () {
+                        var update_title = this_setting.find('#title_text_new').val();
+                        var update_txt = this_setting.find('#text_layer').val();
+                        jQuery('#frame_layer .active').html(update_txt);
+                        jQuery('#frame_layer .active').attr("data-title", update_title);
+                        jQuery('#frame_layer .active').attr("data-text", update_txt);
+
+                        jQuery('#layer_title').val(update_title);
+                        jQuery('#layer_text').val(update_txt);
+
+                        loadData(jQuery('#frame_layer .active'));
+                        $("#the_current-editing-layer-title").val(update_txt);
+                        jQuery('#quick-layers-list > li').each(function (index) {
+                            if ($(this).data('text') == jQuery("#layer_text").val()) {
+                                $(this).attr("data-title", update_title);
+                                $(this).attr("data-text", update_txt);
+                                $(this).find('span').html(update_txt);
+                            }
+                        });
+                        $('.jms-wrap-model').hide('400');
+                    });
                     break;
                 case 'link':
+                    var this_setting = $('.jms-wrap-model.add_link_layer');
+                    this_setting.find('#submitLayerLink').hide();
+                    this_setting.find('#updateLayerLink').show();
+                    this_setting.find("#title_link_new").val("");
+                    this_setting.find("#link_text").val("");
+                    this_setting.find("#link_url").val("");
+                    this_setting.find('#title_link_new').val( jQuery('#layer_title').val() );
+                    this_setting.find('#link_text').val( jQuery('#layer_text').val() );
+                    this_setting.find('#link_url').val( jQuery('#layer_url').val() );
+                    this_setting.show('400');
+                    jQuery("#updateLayerLink").click(function () {
+                        var update_title = this_setting.find('#title_link_new').val();
+                        var update_txt = this_setting.find('#link_text').val();
+                        var update_url = this_setting.find('#link_url').val();
+                        jQuery('#frame_layer .active').html(update_txt);
+                        jQuery('#frame_layer .active').attr("data-title", update_title);
+                        jQuery('#frame_layer .active').attr("data-text", update_txt);
+                        jQuery('#frame_layer .active').attr("data-link", update_url);
+                        loadData(jQuery('#frame_layer .active'));
+                        jQuery("#the_current-editing-layer-title").val(update_txt);
+
+                        jQuery('#layer_title').val(update_title);
+                        jQuery('#layer_text').val(update_txt);
+                        jQuery('#layer_url').val(update_url);
+
+                        jQuery('#quick-layers-list > li').each(function (index) {
+                            if ($(this).data('text') == jQuery("#layer_text").val()) {
+                                $(this).attr("data-title", update_title);
+                                $(this).attr("data-text", update_txt);
+                                $(this).attr("data-link", update_url);
+                                $(this).find('span').html(update_txt);
+                            }
+                        });
+                        $('.jms-wrap-model').hide('400');
+                    });
                     break;
                 case 'image':
-                    break;
-                case 'video':
+                    var selected_id = $('#layer_attachment_id').val();
+                    // Create a new media frame
+                    frame = wp.media({
+                        button: {text: 'Use this media'},
+                        states: [
+                            new wp.media.controller.Library({
+                                title: 'Select Image Layer',
+                                multiple: false
+                            })
+                        ]
+                    });
+                    frame.on('open', function () {
+                        var selection = frame.state().get('selection');
+                        selection.add(wp.media.attachment(selected_id));
+                    });
+                    frame.on('select', function () {
+                        var attachment = frame.state().get('selection').first().toJSON();
+                        var media_url = attachment['url'].replace(jQuery('#root_url').val(), "");
+                        var tpl_caption = jQuery('#frame_layer .tp-caption.active');
+                        tpl_caption.attr('data-title', attachment['title']);
+                        tpl_caption.attr('data-type', 'image');
+                        tpl_caption.attr('data-url', media_url);
+                        tpl_caption.attr('data-attachment_id', attachment['id']);
+                        tpl_caption.html('<img src="' + attachment['url'] + '" />');
+                        jQuery("#layer_attachment_id").val( attachment['id'] );
+                        jQuery('#quick-layers-list > li').each(function () {
+                            if (jQuery(this).data("attachment_id") == selected_id) {
+                                jQuery(this).attr('data-attachment_id', attachment['id']);
+                            }
+                        });
+                        tpl_caption.find('img').attr('data-src', jQuery('#root_url').val() + media_url);
+                        list_event();
+                    });
+                    frame.open();
                     break;
                 default:
                     alert('You are doing somethings wrongs. Try again');
             }
         });
+        /* Show layer */
+        var layer_visibility = jQuery('#layer_visibility');
+        layer_visibility.val( jQuery('#frame_layer .tp-caption.active').data('visibility') );
+        if( layer_visibility.val() == 0) {
+            jQuery("#show-layer").find('.dashicons-visibility').hide();
+        } else {
+            jQuery("#show-layer").find('.dashicons-hidden').hide();
+        }
+        jQuery('#show-layer').click(function (e) {
+            if( layer_visibility.val() == 0 ) {
+                jQuery("#show-layer").find('.dashicons-hidden').hide();
+                jQuery("#show-layer").find('.dashicons-visibility').show();
+                layer_visibility.val(1);
+                jQuery('#frame_layer .tp-caption.active').css('opacity', 1);
+            } else {
+                jQuery("#show-layer").find('.dashicons-visibility').hide();
+                jQuery("#show-layer").find('.dashicons-hidden').show();
+                layer_visibility.val(0);
+                jQuery('#frame_layer .tp-caption.active').css('opacity', 0.3);
+            }
+            jQuery('#frame_layer .tp-caption.active').attr('data-visibility',layer_visibility.val());
+        });
+        /* ------ */
+        layerListClick();
+        var sw = $(".slider-background").data("width");
+        var sh = $(".slider-background").data("height");
+        var mh = $(".slider-background").data("mobile_height");
+        jQuery('.layerconfig .tab > button').each( function(){
+            jQuery(this).click( function(){
+                var $_layers = jQuery('#frame_layer').find('.tp-caption');
+                if( jQuery(this).hasClass('style-mobile') && jQuery(this).hasClass('active') ) {
+                    $(".slider-background").css("width", 480);
+                    $(".slider-background").css("height", mh);
+
+                    $_layers.each(function (index) {
+                        jQuery(this).css( "top", jQuery(this).data("my") );
+                        jQuery(this).css( "left", jQuery(this).data("mx") );
+                        jQuery(this).css( "font-size", jQuery(this).data("mfontsize") );
+                        jQuery(this).css( "letter-spacing", jQuery(this).data("mletterspacing") );
+                        jQuery(this).css( "font-weight", jQuery(this).data("mfontweight") );
+                        jQuery(this).css( "text-transform", jQuery(this).data("mtexttransform") );
+                        jQuery(this).css( "line-height", jQuery(this).data("mlineheight") + "px" );
+                        jQuery(this).draggable({
+                            stop: function (event, ui) {
+                                // Show dropped position.
+                                var Stoppos = jQuery(this).position();
+                                jQuery('#layer_mx').val(Math.round(Stoppos.left));
+                                jQuery('#layer_my').val(Math.round(Stoppos.top));
+                                jQuery(this).attr('data-mx', Math.round(Stoppos.left));
+                                jQuery(this).attr('data-my', Math.round(Stoppos.top));	//truyen bien len input
+                                var mx = Math.round(Stoppos.left);
+                                var my = Math.round(Stoppos.top);
+                                dl = jQuery('#frame_layer'),
+                                    l = parseInt(dl.offset().left, 0) - parseInt(jQuery('#wrap-slider').offset().left, 0);
+                                jQuery('#verlinie').css({left: mx + l + "px"});
+                                jQuery('#horlinie').css({top: my + 38 + "px"});
+                                jQuery('#verlinetext').html(mx);
+                                jQuery('#horlinetext').html(my);
+                            }
+                        });
+                    });
+
+                    jQuery('.layer-data-mobile').change(function (e) {
+                        var name = jQuery(this).attr("name");
+                        var value = jQuery(this).val();
+                        jQuery('#frame_layer .active').eq(0).attr('data-' + name, value);
+                        if (name == 'mx') {
+                            jQuery('#frame_layer .active').css('left', value + 'px');
+                        }
+                        if (name == 'my')
+                            jQuery('#frame_layer .active').css('top', value + 'px');
+                        if (name == 'mfontsize')
+                            jQuery('#frame_layer .active').css('font-size', value + 'px');
+                        if (name == 'mletterspacing')
+                            jQuery('#frame_layer .active').css('letter-spacing', value + 'px');
+                        if (name == 'mfontweight')
+                            jQuery('#frame_layer .active').css('font-weight', value);
+                        if (name == 'mtexttransform')
+                            jQuery('#frame_layer .active').css('text-transform', value);
+                        if (name == 'mlineheight')
+                            jQuery('#frame_layer .active').css('line-height', value + 'px');
+                    });
+                } else {
+                    $(".slider-background").css("width", sw);
+                    $(".slider-background").css("height", sh);
+
+                    $_layers.each(function (index) {
+                        jQuery(this).css( "top", jQuery(this).data("y") );
+                        jQuery(this).css( "left", jQuery(this).data("x") );
+                        jQuery(this).css( "font-size", jQuery(this).data("fontsize") );
+                        jQuery(this).css( "letter-spacing", jQuery(this).data("letterspacing") );
+                        jQuery(this).css( "font-weight", jQuery(this).data("fontweight") );
+                        jQuery(this).css( "text-transform", jQuery(this).data("texttransform") );
+                        jQuery(this).css( "line-height", jQuery(this).data("lineheight") );
+                    });
+
+                    jQuery('.tp-caption').draggable({
+                        stop: function (event, ui) {
+                            // Show dropped position.
+                            var Stoppos = jQuery(this).position();
+                            jQuery('#layer_x').val(Math.round(Stoppos.left));
+                            jQuery('#layer_y').val(Math.round(Stoppos.top));
+                            jQuery(this).attr('data-x', Math.round(Stoppos.left));
+                            jQuery(this).attr('data-y', Math.round(Stoppos.top));	//truyen bien len input
+                            var mx = Math.round(Stoppos.left);
+                            var my = Math.round(Stoppos.top);
+                            dl = jQuery('#frame_layer'),
+                                l = parseInt(dl.offset().left, 0) - parseInt(jQuery('#wrap-slider').offset().left, 0);
+                            jQuery('#verlinie').css({left: mx + l + "px"});
+                            jQuery('#horlinie').css({top: my + 38 + "px"});
+                            jQuery('#verlinetext').html(mx);
+                            jQuery('#horlinetext').html(my);
+                        }
+                    });
+                }
+            });
+        });
     });
+
 
     /* */
     function layerListClick() {
-        jQuery('#quick-layers-list > li').each(function (){
+        jQuery('#quick-layers-list > li').each(function () {
             jQuery(this).click(function (event) {
+                jQuery('#quick-layers-list > li').removeClass('active');
                 var li_text = jQuery(this).data("text");
                 var li_url = jQuery(this).data("url");
+                var li_attachment_id = jQuery(this).data("attachment_id");
+                var li_title = jQuery(this).data("title");
+                var li_link = jQuery(this).data("link");
                 jQuery(this).closest('.layers-list').find('#button_show_all_layer > #the_current-editing-layer-title').val(li_text);
                 jQuery('#frame_layer .tp-caption.active').removeClass('active');
                 jQuery('#frame_layer .tp-caption').each(function (index) {
-                    if (jQuery(this).data("text") == li_text || (jQuery(this).data("url") == li_url && li_url !== undefined)) {
+                    if (jQuery(this).data("text") == li_text || (jQuery(this).data("attachment_id") == li_attachment_id && li_url !== undefined)) {
                         jQuery(this).addClass('active');
                     }
                 });
+                var layer_visibility = jQuery('#layer_visibility');
+                layer_visibility.val( jQuery('#frame_layer .tp-caption.active').data('visibility') );
+                if( layer_visibility.val() == 0) {
+                    jQuery("#show-layer").find('.dashicons-visibility').hide();
+                    jQuery("#show-layer").find('.dashicons-hidden').show();
+                } else {
+                    jQuery("#show-layer").find('.dashicons-hidden').hide();
+                    jQuery("#show-layer").find('.dashicons-visibility').show();
+                }
                 if (jQuery(this).data("type") == 'link') {
                     $('.linkurl').show();
+                    jQuery("#layer_url").val( jQuery(this).data("link") );
                 } else {
                     $('.linkurl').hide();
                 }
-                jQuery("#edit-layer-btn").data('flag', jQuery(this).data("type"));
+                if (jQuery(this).data("type") == 'image' && li_attachment_id !== undefined) {
+                    jQuery("#layer_url").val( li_url );
+                    jQuery("#layer_attachment_id").val( li_attachment_id );
+                    jQuery("#the_current-editing-layer-title").val("Image Layer");
+                }
+                jQuery("#layer_type").val(jQuery(this).data("type"));
+                jQuery("#layer_text").val('text', li_text);
+                jQuery("#layer_title").val('title', li_title);
                 loadData(jQuery(this));
+                jQuery("#edit-layer-btn").click(function () {
+                    jQuery('#quick-layers-wrapper').removeClass('show-list');
+                    var flag = jQuery("#layer_type").val();
+                    switch (flag) {
+                        case 'text':
+                            var this_setting = $('.jms-wrap-model.add_text_layer');
+                            this_setting.find('#title_text_new').val("");
+                            this_setting.find('#text_layer').val("");
+                            this_setting.find('#title_text_new').val(li_title);
+                            this_setting.find('#text_layer').val(li_text);
+                            this_setting.show('400');
+                            break;
+                        case 'link':
+                            var this_setting = $('.jms-wrap-model.add_link_layer');
+                            this_setting.find('#title_link_new').val("");
+                            this_setting.find('#link_text').val("");
+                            this_setting.find('#link_url').val("");
+                            this_setting.find('#title_link_new').val(li_title);
+                            this_setting.find('#link_text').val(li_text);
+                            this_setting.find('#link_url').val(li_link);
+                            this_setting.show('400');
+                            break;
+                    }
+                });
+                jQuery("#quick-layers-wrapper").removeClass('show-list');
+                jQuery(this).addClass('active');
             });
         });
     }
 
+    /* ------ */
     jQuery('#the_current-editing-layer-title').change(function (e) {
-        var value = jQuery(this).val();
-        jQuery('#frame_layer .active').html(value);
-        jQuery('#frame_layer .active').attr("data-text", value);
+        if (jQuery('#frame_layer .active').data('type') == 'text' || jQuery('#frame_layer .active').data('type') == 'link') {
+            var value = jQuery(this).val();
+            jQuery('#frame_layer .active').html(value);
+            jQuery('#frame_layer .active').attr("data-text", value);
+            jQuery('#quick-layers-list > li').each(function () {
+                if ( jQuery(this).data('text') == jQuery('#layer_text').val() ) {
+                    jQuery(this).attr('data-text', value);
+                    jQuery('#layer_text').val(value);
+                    jQuery(this).find('span').html(value);
+                }
+            });
+        }
     });
     /* ------ */
     updateShortcode();
@@ -179,7 +496,32 @@ jQuery(document).ready(function ($) {
                 }
             });
         });
-        console.log(config);
+        //console.log(config);
+        return config;
+    }
+
+    function getSlideJson() {
+        var config = {};
+        var $_setting = jQuery('.edit-form .option-block').find('.row-input');
+        var arr = [];
+        $_setting.each(function () {
+            var $_input = jQuery(this).find('input');
+            $_input.each(function(key, value){
+                key = jQuery(this).attr("name");
+                value = jQuery(this).val();
+                if (key == 'bg_type') {
+                    value = jQuery(this).val();
+                    if ( jQuery(this).is(":checked") ) {
+                        value = jQuery(this).val();
+                    } else {
+                        value = "";
+                    }
+                }
+                if ( key !== undefined && value != "") {
+                    config[key] = value;
+                }
+            });
+        });
         return config;
     }
 
@@ -235,7 +577,7 @@ jQuery(document).ready(function ($) {
             maintimer.append('<li><span>' + txt + '</span></li>');
         }
 
-        list_event();
+        //list_event();
     }
 
     function horRuler() {
@@ -255,31 +597,90 @@ jQuery(document).ready(function ($) {
                 resetFormData();
                 loadData($(this));
                 if ($(this).attr('data-type') == 'video') {
-                    $('.video-settings').show();
+                    jQuery('.video-settings').show();
                 } else {
-                    $('.video-settings').hide();
+                    jQuery('.video-settings').hide();
                 }
-                if ($(this).attr('data-type') == 'text') {
-                    $('.text-area').show();
-                    $('.linkurl').hide();
+                if (jQuery(this).attr('data-type') == 'text') {
+                    jQuery('.text-area').show();
+                    jQuery('.linkurl').hide();
                 } else if ($(this).attr('data-type') == 'link') {
-                    $('.text-area').show();
-                    $('.linkurl').show();
-                } else {
-                    $('.text-area').hide();
+                    jQuery('.text-area').show();
+                    jQuery('.linkurl').show();
+                }
+                else {
+                    jQuery('.text-area').hide();
                 }
 
                 var _index = $(".tp-caption").index($(this));
                 $('#time-line li').removeClass('active');
                 $('#time-line li').eq(_index + 1).addClass('active');
             }
-            var txt = $('.tp-caption.active').data('text');
-            jQuery("#the_current-editing-layer-title").val(txt);
+            var layer_visibility = jQuery('#layer_visibility');
+            layer_visibility.val("");
+            layer_visibility.val( jQuery('.tp-caption.active').data('visibility') );
+            if( layer_visibility.val() == 0) {
+                jQuery("#show-layer").find('.dashicons-visibility').hide();
+                jQuery("#show-layer").find('.dashicons-hidden').show();
+            } else {
+                jQuery("#show-layer").find('.dashicons-hidden').hide();
+                jQuery("#show-layer").find('.dashicons-visibility').show();
+            }
+            jQuery('#quick-layers-list > li').each(function (index) {
+                jQuery(this).removeClass('active');
+                if( jQuery(this).data('type') == 'text' && jQuery(this).data('text') == jQuery('.tp-caption.active').data('text')  ) {
+                    jQuery(this).addClass('active');
+                }
+                if( jQuery(this).data('type') == 'link' && jQuery(this).data('text') == jQuery('.tp-caption.active').data('text')  ) {
+                    jQuery(this).addClass('active');
+                }
+                if( jQuery(this).data('type') == 'image' && jQuery(this).data('attachment_id') == jQuery('.tp-caption.active').data('attachment_id')  ) {
+                    jQuery(this).addClass('active');
+                }
+            });
+
+            jQuery( "#layer_type").val( jQuery('.tp-caption.active').data('type') );
+
+            if ( jQuery( "#layer_type").val() == 'image') {
+                jQuery("#the_current-editing-layer-title").val('Image Layer');
+                jQuery("#layer_url").val(jQuery('.tp-caption.active').data('url'));
+                if ($('.tp-caption.active').data('attachment_id') !== undefined) {
+                    jQuery("#layer_attachment_id").val(jQuery('.tp-caption.active').data('attachment_id'));
+                }
+            } else if ( jQuery( "#layer_type").val() == 'text' ) {
+                var txt = $('.tp-caption.active').data('text');
+                jQuery("#the_current-editing-layer-title").val( jQuery(this).data('text') );
+                jQuery('#layer_title').val( jQuery(this).data('title') );
+                jQuery('#layer_text').val( jQuery(this).data('text') );
+            } else if ( jQuery( "#layer_type").val() == 'link' ) {
+                var txt = $('.tp-caption.active').data('text');
+                jQuery("#the_current-editing-layer-title").val(txt);
+                jQuery('#layer_title').val( jQuery('.tp-caption.active').data('title') );
+                jQuery('#layer_text').val( jQuery('.tp-caption.active').data('text') );
+                jQuery('#layer_url').val( jQuery('.tp-caption.active').data('link') );
+            }
+            else {
+                jQuery("#the_current-editing-layer-title").val('Video Layer');
+            }
+            jQuery("#edit-layer-btn").click(function () {
+                jQuery('#quick-layers-wrapper').removeClass('show-list');
+                var flag = jQuery("#layer_type").val();
+                switch (flag) {
+                    case 'text':
+                        var this_setting = jQuery('.jms-wrap-model.add_text_layer');
+                        this_setting.find('#title_text_new').val("");
+                        this_setting.find('#text_layer').val("");
+                        this_setting.find('#title_text_new').val( jQuery('#layer_title').val() );
+                        this_setting.find('#text_layer').val( jQuery('#layer_text').val() );
+                        jQuery('.jms-wrap-model.add_text_layer').show('400');
+                        break;
+                }
+            });
         });
         jQuery('.layer-data').change(function (e) {
-            var name = $(this).attr("name");
-            var value = $(this).val();
-            $('#frame_layer .active').eq(0).attr('data-' + name, value);
+            var name = jQuery(this).attr("name");
+            var value = jQuery(this).val();
+            jQuery('#frame_layer .active').eq(0).attr('data-' + name, value);
             if (name == 'x') {
                 jQuery('#frame_layer .active').css('left', value + 'px');
             }
@@ -294,16 +695,16 @@ jQuery(document).ready(function ($) {
                     jQuery('#frame_layer .active').css('width', '100%');
                     jQuery('#frame_layer .active').css('height', '100%');
                 } else {
-                    jQuery('#frame_layer .active iframe').attr('width', $('#layer_width').val() + 'px');
-                    jQuery('#frame_layer .active iframe').attr('height', $('#layer_height').val() + 'px');
-                    jQuery('#frame_layer .active').css('left', $('#layer_x').val() + 'px');
-                    jQuery('#frame_layer .active').css('top', $('#layer_y').val() + 'px');
+                    jQuery('#frame_layer .active iframe').attr('width', jQuery('#layer_width').val() + 'px');
+                    jQuery('#frame_layer .active iframe').attr('height', jQuery('#layer_height').val() + 'px');
+                    jQuery('#frame_layer .active').css('left', jQuery('#layer_x').val() + 'px');
+                    jQuery('#frame_layer .active').css('top', jQuery('#layer_y').val() + 'px');
                 }
-            if (name == 'width' && $('#layer_videobg').val() != 1) {
+            if (name == 'width' && jQuery('#layer_videobg').val() != 1) {
                 jQuery('#frame_layer .active iframe').attr('width', value + 'px');
                 jQuery('#frame_layer .active').css('width', 'auto');
             }
-            if (name == 'height' && $('#layer_videobg').val() != 1) {
+            if (name == 'height' && jQuery('#layer_videobg').val() != 1) {
                 jQuery('#frame_layer .active iframe').attr('height', value + 'px');
                 jQuery('#frame_layer .active').css('height', 'auto');
             }
@@ -328,7 +729,7 @@ jQuery(document).ready(function ($) {
             if (name == 'letterspacing')
                 jQuery('#frame_layer .active').css('letter-spacing', value + 'px');
             if (name == 'lineheight')
-                jQuery('#frame_layer .active').css('line-height', value);
+                jQuery('#frame_layer .active').css('line-height', value + 'px');
             if (name == 'align') {
                 if (jQuery('#layer_offset').val() == '')
                     var layer_offset = 0;
@@ -371,7 +772,7 @@ jQuery(document).ready(function ($) {
                     var layer_offset = 0;
                 else
                     var layer_offset = parseInt(value);
-                var layer_align = $('#layer_align').val();
+                var layer_align = jQuery('#layer_align').val();
                 if (layer_align == 'left') {
                     jQuery('#frame_layer .active').css('left', layer_offset);
                     jQuery('#frame_layer .active').attr('data-x', layer_offset);
@@ -400,70 +801,90 @@ jQuery(document).ready(function ($) {
         jQuery('.tp-caption').draggable({
             stop: function (event, ui) {
                 // Show dropped position.
-                var Stoppos = $(this).position();
-                $('#layer_x').val(Math.round(Stoppos.left));
-                $('#layer_y').val(Math.round(Stoppos.top));
-                $(this).attr('data-x', Math.round(Stoppos.left));
-                $(this).attr('data-y', Math.round(Stoppos.top));	//truyen bien len input
+                var Stoppos = jQuery(this).position();
+                jQuery('#layer_x').val(Math.round(Stoppos.left));
+                jQuery('#layer_y').val(Math.round(Stoppos.top));
+                jQuery(this).attr('data-x', Math.round(Stoppos.left));
+                jQuery(this).attr('data-y', Math.round(Stoppos.top));	//truyen bien len input
                 var mx = Math.round(Stoppos.left);
                 var my = Math.round(Stoppos.top);
                 dl = jQuery('#frame_layer'),
                     l = parseInt(dl.offset().left, 0) - parseInt(jQuery('#wrap-slider').offset().left, 0);
-                $('#verlinie').css({left: mx + l + "px"});
-                $('#horlinie').css({top: my + 38 + "px"});
-                $('#verlinetext').html(mx);
-                $('#horlinetext').html(my);
+                jQuery('#verlinie').css({left: mx + l + "px"});
+                jQuery('#horlinie').css({top: my + 38 + "px"});
+                jQuery('#verlinetext').html(mx);
+                jQuery('#horlinetext').html(my);
             }
         });
         jQuery('.delay-time').resizable({
             handles: 'e',
             stop: function (event, ui) {
-                var _index = parseInt($(this).closest('li').attr('data-index'));
-                $('.tp-caption').eq(_index).attr('data-delay', $(this).width() * 10);
-                if ($('.tp-caption').eq(_index).hasClass('active')) {
-                    $('#layer_delay').val($(this).width() * 10);
+                var _index = parseInt(jQuery(this).closest('li').attr('data-index'));
+                jQuery('.tp-caption').eq(_index).attr('data-delay', jQuery(this).width() * 10);
+                if (jQuery('.tp-caption').eq(_index).hasClass('active')) {
+                    jQuery('#layer_delay').val(jQuery(this).width() * 10);
                 } else {
-                    $('.tp-caption').eq(_index).trigger("click");
+                    jQuery('.tp-caption').eq(_index).trigger("click");
                 }
             },
             resize: function (event, ui) {
-                $('#mastertimer-curtimeinner').html($(this).width() * 10 + 'ms');
-                $('#mastertimer-curtime').css('left', $(this).width() + 'px');
+                jQuery('#mastertimer-curtimeinner').html(jQuery(this).width() * 10 + 'ms');
+                jQuery('#mastertimer-curtime').css('left', jQuery(this).width() + 'px');
             }
-
         });
         jQuery('.layer-time').resizable({
             handles: 'e',
             stop: function (event, ui) {
-                var _index = $(this).closest('li').attr('data-index');
-                $('.tp-caption').eq(_index).attr('data-time', $(this).width() * 10);
-                if ($('.tp-caption').eq(_index).hasClass('active')) {
-                    $('#layer_time').val($(this).width() * 10);
+                var _index = jQuery(this).closest('li').attr('data-index');
+                jQuery('.tp-caption').eq(_index).attr('data-time', jQuery(this).width() * 10);
+                if (jQuery('.tp-caption').eq(_index).hasClass('active')) {
+                    jQuery('#layer_time').val(jQuery(this).width() * 10);
                 } else {
-                    $('.tp-caption').eq(_index).trigger("click");
+                    jQuery('.tp-caption').eq(_index).trigger("click");
                 }
             },
             resize: function (event, ui) {
-                $('#mastertimer-curtimeinner').html($(this).width() * 10 + 'ms');
-                $('#mastertimer-curtime').css('left', $(this).width() + 'px');
+                jQuery('#mastertimer-curtimeinner').html(jQuery(this).width() * 10 + 'ms');
+                jQuery('#mastertimer-curtime').css('left', jQuery(this).width() + 'px');
             }
         });
         jQuery('.mastertimer-layer').click(function (e) {
-            var _index = $(this).attr('data-index');
-            $('.tp-caption').eq(_index).trigger("click");
+            e.preventDefault();
+            var _index = jQuery(this).attr('data-index');
+            jQuery('.tp-caption').eq(_index).trigger("click");
         });
     }
 
     jQuery('#duplicate-layer').click(function (e) {
-        if ($("#frame_layer .active").length == 0) {
+        if (jQuery("#frame_layer .active").length == 0) {
             alert('Please click to Layer box to choose one Layer to copy!');
             return false;
         }
-        $("#frame_layer .active").clone().removeClass('active').appendTo("#frame_layer");
+        var e_type = jQuery("#frame_layer .active").data("type");
+        if( e_type == 'text' ) {
+            var obj_active = jQuery("#frame_layer .active");
+            obj_active.clone().html(obj_active.data('text') + ' coppy').attr('data-text', obj_active.data('text') + ' coppy').removeClass('active').appendTo("#frame_layer");
+        } else {
+            obj_active.clone().removeClass('active').appendTo("#frame_layer");
+        }
+        jQuery('#quick-layers-list li').each(function(){
+            switch (e_type) {
+                case 'text':
+                    if( jQuery(this).data("text") == obj_active.data("text") ) {
+                        jQuery(this).clone().html('<i class="dashicons dashicons-format-aside"></i><span>'+obj_active.data('text') + ' coppy'+'</span>').attr('data-text', obj_active.data('text') + ' coppy').removeClass('active').appendTo("#quick-layers-list");
+                    }
+                    break;
+                case 'image':
+                    if( jQuery(this).data("data-attachment_id") == jQuery("#frame_layer .active").data("data-attachment_id") ) {
+                        jQuery(this).clone().removeClass('active').appendTo("#quick-layers-list");
+                    }
+                    break;
+            }
+        });
         list_event();
     });
     jQuery('#del-layer').click(function () {
-        if ($("#frame_layer .active").length == 0) {
+        if (jQuery("#frame_layer .active").length == 0) {
             alert('Please click to Layer box to choose one Layer to delete!');
             return false;
         }
@@ -471,32 +892,36 @@ jQuery(document).ready(function ($) {
         if (!c) {
             return false;
         } else {
-            var li_text = $("#frame_layer .active").data("text");
-            var li_url = $("#frame_layer .active").data("url");
-            $("#quick-layers-list li").each(function (index) {
-                if ($(this).data("text") == li_text || ($(this).data("url") !== undefined && $(this).data("url") == li_url)) {
-                    $(this).remove();
+            var li_text = jQuery("#frame_layer .active").data("text");
+            var li_url = jQuery("#frame_layer .active").data("url");
+            jQuery("#quick-layers-list li").each(function (index) {
+                if (jQuery(this).data("text") == li_text || (jQuery(this).data("url") !== undefined && jQuery(this).data("url") == li_url)) {
+                    jQuery(this).remove();
                 }
             });
-            var _index = $(".tp-caption").index($("#frame_layer .active").eq(0));
-            $("#frame_layer .active").remove();
+            var _index = jQuery(".tp-caption").index(jQuery("#frame_layer .active").eq(0));
+            jQuery("#frame_layer .active").remove();
             //delete timeline
 
-            $('#time-line li.mastertimer-layer').each(function (index) {
-                if ($(this).attr('data-index') == _index) {
-                    $(this).remove();
-                    $('#timeline-title li').eq(_index).remove();
+            jQuery('#time-line li.mastertimer-layer').each(function (index) {
+                if (jQuery(this).attr('data-index') == _index) {
+                    jQuery(this).remove();
+                    jQuery('#timeline-title li').eq(_index).remove();
                 }
             });
             //reorder index
-            $('#time-line li.mastertimer-layer').each(function (index) {
-                $(this).attr('data-index', index);
+            jQuery('#time-line li.mastertimer-layer').each(function (index) {
+                jQuery(this).attr('data-index', index);
             });
         }
     });
     jQuery('#save-layers').click(function (e) {
-        var params = JSON.stringify(getLayersJson());
-        $('#layersjson').val(params);
+        var layer_params = JSON.stringify(getLayersJson());
+        var slide_params = JSON.stringify(getSlideJson());
+        var slide_title = jQuery( "input[name='title']" ).val();
+        jQuery('#layersjson').val(layer_params);
+        jQuery('#slidejson').val(slide_params);
+        jQuery('#slidetitle').val(slide_title);
         var layersForm = document.layersForm;
         layersForm.submit();
         return false;
@@ -510,16 +935,20 @@ jQuery(document).ready(function ($) {
      */
     jQuery('#jms-dialog .close').click(function (event) {
         event.preventDefault();
-        $('.jms-wrap-model').hide('400');
+        jQuery('.jms-wrap-model').hide('400');
     });
     jQuery('#add-layer-wrap').mouseover(function (e) {
-        $('.add-layer-list').show();
+        jQuery('.add-layer-list').show();
     });
     jQuery('#add-layer-wrap').mouseleave(function (e) {
-        $('.add-layer-list').hide();
+        jQuery('.add-layer-list').hide();
     });
     jQuery('#add-text').click(function (e) {
-        $('.jms-wrap-model.add_text_layer').show('400');
+        jQuery(".jms-wrap-model.add_text_layer").find('#updateLayerText').hide();
+        jQuery(".jms-wrap-model.add_text_layer").find('#submitLayerText').show();
+        jQuery(".jms-wrap-model.add_text_layer").find("#title_text_new").val("");
+        jQuery(".jms-wrap-model.add_text_layer").find("#text_layer").val("");
+        jQuery('.jms-wrap-model.add_text_layer').show('400');
     });
 
     // Submit text
@@ -532,48 +961,52 @@ jQuery(document).ready(function ($) {
         } else {
             text_layer = jQuery('#text_layer').val();
         }
-        var tpl_caption = $('<div />', {
+        var tpl_caption = jQuery('<div />', {
             'class': 'tp-caption ui-draggable ui-draggable-handle'
         });
         tpl_caption.html(text_layer);
         tpl_caption.attr('data-title', title);
         tpl_caption.attr('data-type', 'text');
         tpl_caption.attr('data-text', text_layer);
+        tpl_caption.attr('data-visibility', 1);
         jQuery('#frame_layer').append(tpl_caption);
 
-        var layers_list = $('<li />');
-        layers_list.html(text_layer);
-        layers_list.attr('data-type', 'text');
-        layers_list.attr('data-text', text_layer);
+        var layers_list = jQuery('<li data-type="text" data-text="' + text_layer + '"> <i class="dashicons dashicons-format-aside"></i> <span>' + text_layer + '</span> </li>');
         jQuery('#quick-layers-list').append(layers_list);
         layerListClick();
-        $('.jms-wrap-model').hide('400');
-        var _index = $('.tp-caption').index(tpl_caption);
+        jQuery('.jms-wrap-model').hide('400');
+        var _index = jQuery('.tp-caption').index(tpl_caption);
         loadTimeLines();
         list_event();
         return false;
     });
     jQuery('#add-link').click(function (e) {
-        $('.jms-wrap-model.add_link_layer').show('400');
+        jQuery(".jms-wrap-model.add_link_layer").find('#submitLayerLink').show();
+        jQuery(".jms-wrap-model.add_link_layer").find('#updateLayerLink').hide();
+        jQuery(".jms-wrap-model.add_link_layer").find("#title_link_new").val("");
+        jQuery(".jms-wrap-model.add_link_layer").find("#link_text").val("");
+        jQuery(".jms-wrap-model.add_link_layer").find("#link_url").val("");
+        jQuery('.jms-wrap-model.add_link_layer').show('400');
     });
     // Submit link
     jQuery('#submitLayerLink').click(function () {
         id_slider = jQuery('#id_slider').val();
         title = jQuery('#title_link_new').val();
         text_layer = jQuery('#link_text').val();
-        var tpl_caption = $('<div />', {
+        var tpl_caption = jQuery('<div />', {
             'class': 'tp-caption ui-draggable ui-draggable-handle'
         });
-        var captionlink = $("<a></a>").text(text_layer);
+        var captionlink = jQuery("<a></a>").text(text_layer);
         tpl_caption.append(captionlink);
         captionlink.attr('href', jQuery('#link_url').val());
         tpl_caption.attr('data-title', title);
         tpl_caption.attr('data-type', 'link');
         tpl_caption.attr('data-text', text_layer);
         tpl_caption.attr('data-link', jQuery('#link_url').val());
+        tpl_caption.attr('data-visibility', 1);
         jQuery('#frame_layer').append(tpl_caption);
-        $('.jms-wrap-model').hide('400');
-        var _index = $('.tp-caption').index(tpl_caption);
+        jQuery('.jms-wrap-model').hide('400');
+        var _index = jQuery('.tp-caption').index(tpl_caption);
         loadTimeLines();
         list_event();
         return false;
@@ -596,17 +1029,17 @@ jQuery(document).ready(function ($) {
 
     //popup video layer
     jQuery('#add-video').click(function (e) {
-        $('.jms-wrap-model.add_video_layer').show('400');
+        jQuery('.jms-wrap-model.add_video_layer').show('400');
     });
 
     //submit add video layer
     jQuery('#submitLayerVideo').click(function (e) {
-        var video_url = $('#data_video_new').val();
+        var video_url = jQuery('#data_video_new').val();
         var video = parseVideo(video_url);
-        var tpl_caption = $('<div />', {
+        var tpl_caption = jQuery('<div />', {
             'class': 'tp-caption ui-draggable ui-draggable-handle'
         });
-        tpl_caption.attr('data-title', $('#title_video_new').val());
+        tpl_caption.attr('data-title', jQuery('#title_video_new').val());
         tpl_caption.attr('data-type', 'video');
         tpl_caption.attr('data-videotype', video['type']);
         tpl_caption.attr('data-videoid', video['id']);
@@ -616,6 +1049,7 @@ jQuery(document).ready(function ($) {
         tpl_caption.attr('data-loop', 0);
         tpl_caption.attr('data-controls', 0);
         tpl_caption.attr('data-videobg', 0);
+        tpl_caption.attr('data-visibility', 1);
         if (video['type'] == 'youtube') {
             tpl_caption.html('<i class="dashicons dashicons-move" title="Keep mouse to move" ></i><iframe src="http://www.youtube.com/embed/' + video['id'] + '?autoplay=1&loop=1" allowfullscreen frameborder="0" />');
         } else if (video['type'] == 'vimeo') {
@@ -625,7 +1059,7 @@ jQuery(document).ready(function ($) {
             return false;
         }
         jQuery('#frame_layer').append(tpl_caption);
-        $('.jms-wrap-model.add_video_layer').hide('400');
+        jQuery('.jms-wrap-model.add_video_layer').hide('400');
         list_event();
     });
 
@@ -645,15 +1079,22 @@ jQuery(document).ready(function ($) {
         //When an image is selected in media frame...
         frame.on('select', function () {
             var attachment = frame.state().get('selection').first().toJSON();
-            var media_url = attachment['url'].replace($('#root_url').val(), "");
-            var tpl_caption = $('<div />', {
+            var media_url = attachment['url'].replace(jQuery('#root_url').val(), "");
+            var tpl_caption = jQuery('<div />', {
                 'class': 'tp-caption ui-draggable ui-draggable-handle'
             });
             tpl_caption.html('<img src="' + attachment['url'] + '" />');
             tpl_caption.attr('data-title', attachment['title']);
             tpl_caption.attr('data-type', 'image');
             tpl_caption.attr('data-url', media_url);
+            tpl_caption.attr('data-attachment_id', attachment['id']);
+            tpl_caption.attr('data-visibility', 1);
             jQuery('#frame_layer').append(tpl_caption);
+
+            var clone_html = '<li data-url="'+media_url+'" data-attachment_id="'+attachment['id']+'" data-type="image">' +
+                '<i class="dashicons dashicons-format-image"></i>' +
+                '                <span>Image layers</span> </li>';
+            jQuery('#quick-layers-list').append(clone_html);
             list_event();
         });
         frame.open();
@@ -662,5 +1103,5 @@ jQuery(document).ready(function ($) {
     horRuler();
     drawRuler();
     loadTimeLines();
-    $('.tp-caption').eq(0).trigger("click");
+    jQuery('.tp-caption').eq(0).trigger("click");
 });

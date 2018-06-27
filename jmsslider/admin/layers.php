@@ -41,10 +41,14 @@ $list_slide_safe_link = wp_nonce_url('admin.php?page=jmssliderlayer&task=list_sl
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_slide = $_POST['id_slide'];
     $layersjson = stripslashes_deep($_POST['layersjson']);
-    if ($layersjson != $data) {
+    $slidejson = stripslashes_deep($_POST['slidejson']);
+    $slidetitle = stripslashes_deep($_POST['slidetitle']);
+    if ( $layersjson != $data || $slidejson != $slide->params ) {
         $update_slide = $wpdb->update(
             $wpdb->prefix . 'jms_slider_slides',
             array(
+                'title'     => $slidetitle,
+                'params' => $slidejson,
                 'layers' => $layersjson
             ),
             array('id_slide' => $id_slide),
@@ -69,6 +73,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+<div class="wrap jmsslider">
+    <h2><?php echo esc_html_e( 'Edit Slide', 'jmsslider' );?>
+        <a href="<?php echo $list_slide_safe_link; ?>" class="btn pull-right"><?php echo esc_html_e( 'Back to Slides List', 'jmsslider' );?></a>
+    </h2>
+    <?php
+    if($id) {
+        $json = $slide->params;
+        $j_setting = json_decode($json);
+        $class = $j_setting->class;
+        $slide_link = isset($j_setting->slide_link) ? $j_setting->slide_link : '';
+        $bg_type = isset($j_setting->bg_type) ? $j_setting->bg_type : '';
+        $bg_color = isset($j_setting->bg_color) ? $j_setting->bg_color : '';
+        $bg_image = isset($j_setting->bg_image) ? $j_setting->bg_image : '';
+    }
+    ?>
+    <div class="edit-form jmsslider-setting">
+        <div class="option-block col-5">
+            <h3><?php echo esc_html_e( 'General', 'jmsslider' );?></h3>
+            <div class="slide-title">
+                <label for="bg_type"><?php echo esc_html_e( 'Slide Title', 'jmsslider' );?></label>
+                <input type="text" name="title" value="<?php if(!empty($slide->title)) {echo $slide->title;} else {echo 'New slide';} ?>" placeholder="<?php echo esc_html_e( 'Enter your Slide Name here', 'jmsslider' );?>" autofocus="autofocus">
+            </div>
+            <div class="row-input">
+                <label for="bg_type"><?php echo esc_html_e( 'Slide Class Suffix', 'jmsslider' );?></label>
+                <input type="text" name="class" value="<?php if(!empty($class)) {echo $class;} else {echo '';} ?>" placeholder="<?php echo esc_html_e( 'Enter your Slide Class here', 'jmsslider' );?>" />
+            </div>
+            <div class="row-input">
+                <label for="bg_type"><?php echo esc_html_e( 'Slide Link', 'jmsslider' );?></label>
+                <input type="text" name="slide_link" value="<?php if(isset($slide_link) && !empty($slide_link)) {echo $slide_link;} else {echo '#';} ?>" placeholder="<?php echo esc_html_e( 'Enter your Slide Link here', 'jmsslider' );?>" />
+            </div>
+        </div>
+        <div class="option-block col-5">
+            <h3><?php echo esc_html_e( 'Background', 'jmsslider' );?></h3>
+            <div class="row-input image">
+                <label for="bg_type"><?php echo esc_html_e( 'Background Image', 'jmsslider' );?></label>
+                <input type="radio" id="bg_image" name="bg_type" value="image" <?php if(isset($bg_type) && $bg_type == 'image') {?>checked="checked"<?php } ?> > <?php echo esc_html_e( 'Image', 'jmsslider' );?>
+                <input type="hidden" id="image_url" name="bg_image" value="<?php if(isset($bg_type) && !empty($bg_image)) { echo $bg_image; }?>" >
+                <button id="pick_images" class="button"><?php echo esc_html_e( 'Select Images', 'jmsslider' );?></button>
+                <?php if(!empty($bg_image)) {?><div class="img-preview"><span class="button"><?php echo esc_html_e( 'Preview', 'jmsslider' );?></span><img src="<?php echo site_url().$bg_image;?>" /></div><?php } ?>
+            </div>
+            <div class="row-input">
+                <label for="bg_type"><?php echo esc_html_e( 'Background Color', 'jmsslider' );?></label>
+                <input type="radio" id="bg_color" name="bg_type" value="color" <?php if(isset($bg_type) && $bg_type == 'color') {?>checked="checked"<?php } ?>> <?php echo esc_html_e( 'Color', 'jmsslider' );?>
+                <input style="display:inline-block;" type="text" class="pick_color" name="bg_color" id="bg_color" value="<?php if(isset($bg_color) && !empty($bg_color)) { echo $bg_color; }?>" data-default-color="#ffffff">
+            </div>
+        </div>
+    </div>
+</div>
 <div class="wrap layer-manager jmsslider">
     <h2><?php echo esc_html_e('Layers Manager', 'jmsslider'); ?>
         <a href="<?php echo $list_slide_safe_link; ?>"
@@ -180,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             onclick="openCity(event, 'tab_animation')"><?php echo esc_html_e('Animation', 'jmsslider'); ?></button>
                     <button class="tablinks video-settings"
                             onclick="openCity(event, 'tab_video_set')"><?php echo esc_html_e('Video Layer Setting', 'jmsslider'); ?></button>
-                    <button class="tablinks"
+                    <button class="tablinks style-mobile"
                             onclick="openCity(event, 'tab_style_mobile')"><?php echo esc_html_e('Style Moblie < 480', 'jmsslider'); ?></button>
                 </div>
                 <div id="tab_setting" class="tabcontent row">
@@ -204,14 +256,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="field-box linkurl">
                             <label for=""><?php echo esc_html_e('Link Url', 'jmsslider'); ?></label>
                             <input type="text" name="link" id="layer_link" class="layer-data" value="#"/>
-                        </div>
-                    </div>
-                    <div class="col-4-10">
-                        <div class="field-box text-area-content">
-                            <label for=""> <?php echo esc_html_e('Text', 'jmsslider'); ?></label>
-                            <div class="row">
-                                <textarea id="layer_text" name="text" class="layer-data" cols="70" rows="2"></textarea>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -298,21 +342,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <i class="icon-horizontal icon-slider" title="Move Horizontal"> </i>
                                 <div class="tooltip"><?php echo esc_html_e('Data X Position, Left Offset In Pixel', 'jmsslider'); ?></div>
                             </label>
-                            <input type="number" name="mx" id="layer_mx" class="layer-data" value=""> px
+                            <input type="number" name="mx" id="layer_mx" class="layer-data-mobile" value=""> px
                         </div>
                         <div class="field-box">
                             <label>
                                 <i class="icon-vertical icon-slider" title="Move Vertical"> </i>
                                 <div class="tooltip"><?php echo esc_html_e('Data Y Position, Top Offset In Pixel', 'jmsslider'); ?></div>
                             </label>
-                            <input type="number" name="my" id="layer_my" class="layer-data" value=""> px
+                            <input type="number" name="my" id="layer_my" class="layer-data-mobile" value=""> px
                         </div>
                         <div class="field-box">
                             <label>
                                 <i class="icon-align icon-slider" title="Edit align"> </i>
                                 <div class="tooltip"><?php echo esc_html_e('Align for Layer, Left : data X Will = 0, Right Data X will = 100%, Center Data X will = ([slide width] - [object x])/2.Note : When use Data Align Data X will not avaiable.', 'jmsslider'); ?></div>
                             </label>
-                            <select name="malign" id="layer_malign" class="layer-data">
+                            <select name="malign" id="layer_malign" class="layer-data-mobile">
                                 <option selected="" value=""><?php echo esc_html_e('none', 'jmsslider'); ?></option>
                                 <option value="left"><?php echo esc_html_e('Left', 'jmsslider'); ?></option>
                                 <option value="right"><?php echo esc_html_e('Right', 'jmsslider'); ?></option>
@@ -324,7 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <i class="icon-alignoffset icon-slider" title="Align offset"> </i>
                                 <div class="tooltip"><?php echo esc_html_e('Align Offset : Offset from align direction (Left, Right, Center). If set align "Right" it will offset with right side, if set align "Left" it will offset with left side, if set align "Center" it will offset with center of slider, example -30 will shift to left 30px, 30 will shift to right 30px.', 'jmsslider'); ?></div>
                             </label>
-                            <input type="number" name="moffset" id="layer_moffset" class="layer-data" value="20"> (px)
+                            <input type="number" name="moffset" id="layer_moffset" class="layer-data-mobile" value="20"> (px)
                         </div>
                     </div>
                     <div class="row">
@@ -333,14 +377,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <i class="icon-fontsize icon-slider" title="Font size"> </i>
                                 <div class="tooltip"><?php echo esc_html_e('Font Size', 'jmsslider'); ?></div>
                             </label>
-                            <input name="mfontsize" id="layer_mfontsize" class="layer-data" value="20" type="number"> px
+                            <input name="mfontsize" id="layer_mfontsize" class="layer-data-mobile" value="20" type="number"> px
                         </div>
                         <div class="field-box">
                             <label>
                                 <i class="icon-letterspacing icon-slider" title="Letter Spacing"></i>
                                 <div class="tooltip"><?php echo esc_html_e('Letter Spacing', 'jmsslider'); ?></div>
                             </label>
-                            <input name="mletterspacing" id="layer_mletterspacing" class="layer-data" value="0" min="0"
+                            <input name="mletterspacing" id="layer_mletterspacing" class="layer-data-mobile" value="0" min="0"
                                    max="10" step="0.1" type="number"> px
                         </div>
                         <div class="field-box">
@@ -348,7 +392,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <i class="icon-fontweight icon-slider" title="Font Weight"> </i>
                                 <div class="tooltip"><?php echo esc_html_e('Font Weight', 'jmsslider'); ?></div>
                             </label>
-                            <select name="mfontweight" id="layer_mfontweight" class="layer-data">
+                            <select name="mfontweight" id="layer_mfontweight" class="layer-data-mobile">
                                 <option value="100"><?php echo esc_html_e('100', 'jmsslider'); ?></option>
                                 <option value="200"><?php echo esc_html_e('200', 'jmsslider'); ?></option>
                                 <option value="300"><?php echo esc_html_e('300', 'jmsslider'); ?></option>
@@ -366,7 +410,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <i class="icon-transform icon-slider" title="Text Transform"> </i>
                                 <div class="tooltip"><?php echo esc_html_e('Text Transform', 'jmsslider'); ?></div>
                             </label>
-                            <select name="mtexttransform" id="layer_mtexttransform" class="layer-data">
+                            <select name="mtexttransform" id="layer_mtexttransform" class="layer-data-mobile">
                                 <option value="none"
                                         selected="selected"><?php echo esc_html_e('none', 'jmsslider'); ?></option>
                                 <option value="uppercase"><?php echo esc_html_e('uppercase', 'jmsslider'); ?></option>
@@ -379,7 +423,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <i class="icon-lineheight icon-slider" title="Line Height"> </i>
                                 <div class="tooltip"><?php echo esc_html_e('Line Height', 'jmsslider'); ?></div>
                             </label>
-                            <input name="mlineheight" id="layer_mlineheight" class="layer-data" value="0" min="1"
+                            <input name="mlineheight" id="layer_mlineheight" class="layer-data-mobile" value="0" min="1"
                                    max="10" step="0.1" type="number"> px
                         </div>
                     </div>
@@ -579,6 +623,14 @@ the direction-type values define the direction in which the element is animated.
                     <input type="text" name="the_current-editing-layer-title" id="the_current-editing-layer-title"
                            value="No Layer Selected"/>
                     <i id="edit-layer-btn" class="dashicons dashicons-edit"></i>
+                <div class="hidden" id="layer-value-input">
+                    <input type="hidden" id="layer_type" />
+                    <input type="hidden" id="layer_title" />
+                    <input type="hidden" id="layer_text" />
+                    <input type="hidden" id="layer_url" />
+                    <input type="hidden" id="layer_attachment_id" />
+                    <input type="hidden" id="layer_visibility" />
+                </div>
                 </span>
 
             </div>
@@ -589,7 +641,8 @@ the direction-type values define the direction in which the element is animated.
                         foreach ($layers as $layer) {
                             ?>
                             <li data-text="<?php echo $layer['text']; ?>" data-text="<?php echo $layer['type']; ?>"
-                                <?php if ($layer["type"] == 'image') { ?>data-url="<?php echo $layer['url']; ?>" <?php } ?>
+                                <?php if ($layer["type"] == 'image' && $layer['url'] != "") { ?>data-url="<?php echo $layer['url']; ?>" <?php } ?>
+                                <?php if ($layer["type"] == 'image' && $layer['attachment_id'] != "") { ?>data-attachment_id="<?php echo $layer['attachment_id']; ?>" <?php } ?>
                                 <?php if ($layer["type"] == 'link') { ?>data-link="<?php echo $layer['link']; ?>" <?php } ?>
                                 <?php if ($layer["title"] != '') { ?>data-title="<?php echo $layer['title']; ?>" <?php } ?>
                                 <?php if ($layer["class"] != '') { ?>data-class="<?php echo $layer['class']; ?>" <?php } ?>
@@ -601,9 +654,9 @@ the direction-type values define the direction in which the element is animated.
                                     <i class="dashicons dashicons-format-image"></i>
                                     <?php
                                     if ($layer['text'] == "") {
-                                        echo 'Image layers';
+                                        echo "<span>Image layers</span>";
                                     } else {
-                                        echo $layer['text'];
+                                        echo "<span>" . $layer['text'] . "</span>";
                                     }
                                 } ?>
                                 <?php
@@ -612,9 +665,9 @@ the direction-type values define the direction in which the element is animated.
                                     <i class="dashicons dashicons-format-aside"></i>
                                     <?php
                                     if ($layer['text'] == "") {
-                                        echo 'Text layers';
+                                        echo "<span>Text layers</span>";
                                     } else {
-                                        echo $layer['text'];
+                                        echo "<span>" . $layer['text'] . "</span>";
                                     }
                                 } ?>
                                 <?php
@@ -623,9 +676,9 @@ the direction-type values define the direction in which the element is animated.
                                     <i class="dashicons dashicons-admin-links"></i>
                                     <?php
                                     if ($layer['text'] == "") {
-                                        echo 'Link layers';
+                                        echo "<span>Link layers</span>";
                                     } else {
-                                        echo $layer['text'];
+                                        echo "<span>" . $layer['text'] . "</span>";
                                     }
                                 } ?>
                             </li>
@@ -639,7 +692,12 @@ the direction-type values define the direction in which the element is animated.
         <a class="btn btn-tool pull-right" id="del-layer" title="Delete Layer"><i
                     class="dashicons dashicons-trash"></i> <?php echo esc_html_e('Delete Layer', 'jmsslider'); ?></a>
         <a class="btn btn-tool pull-right" id="duplicate-layer" title="Duplicate Layer"><i
-                    class="dashicons dashicons-admin-page"></i> <?php echo esc_html_e('Duplicate Layer', 'jmsslider'); ?>
+                    class="dashicons dashicons-admin-page"></i>
+        </a>
+        <a class="btn btn-tool pull-right" id="show-layer" title="Show/Hide Layer"><i
+                    class="dashicons dashicons-visibility"></i>
+            <i
+                    class="dashicons dashicons-hidden"></i>
         </a>
     </div>
     <div class="wrap-slider" id="wrap-slider">
@@ -657,6 +715,9 @@ the direction-type values define the direction in which the element is animated.
         </div>
         <div class="layers-wrapper">
             <div class="slider-background"
+                <?php if ($_width){ ?> data-width="<?php echo $_width; ?>" <?php } ?>
+                <?php if ($_height){ ?> data-height="<?php echo $_height; ?>" <?php } ?>
+                <?php if ($_settings){ ?> data-mobile_height="<?php echo $_settings["mobile_height"]; ?>" <?php } ?>
                  style="<?php if ($_height) echo "height:" . $_height . "px;" ?><?php if ($_width) echo "width:" . $_width . "px;" ?>">
                 <div id="frame_layer" class="slider fraction-slider" style="<?php if ($bg_type == 'image') {
                     if (strpos($bg_image, "http") !== false) $bg_url = $bg_image; else $bg_url = site_url() . $bg_image;
@@ -678,6 +739,7 @@ the direction-type values define the direction in which the element is animated.
                                      if (isset($layer['x'])) echo "left:" . $layer['x'] . 'px;';
                                      if (isset($layer['y'])) echo 'top:' . $layer['y'] . 'px;';
                                  } ?>
+                                 <?php if($layer['visibility'] == 0){?>opacity:0.3;<?php }?>
                                  <?php if (isset($layer['z_index'])) { ?>z-index:<?php echo $layer['z_index']; ?>;<?php } ?>
                                  <?php if (isset($layer['fontsize'])) { ?> font-size:<?php echo $layer['fontsize'] . 'px';?>;<?php } ?>
                                  <?php if (isset($layer['textcolor'])) { ?> color:<?php echo $layer['textcolor'];?>;<?php } ?>
@@ -776,6 +838,8 @@ the direction-type values define the direction in which the element is animated.
                 <div class="form-group">
                     <button type="button" id="submitLayerText"
                             class="button button-primary button-large"><?php echo esc_html_e('Add Layer', 'jmsslider'); ?></button>
+                    <button type="button" id="updateLayerText"
+                            class="button button-primary button-large"><?php echo esc_html_e('Update Layer', 'jmsslider'); ?></button>
                 </div>
             </div>
         </div>
@@ -803,6 +867,8 @@ the direction-type values define the direction in which the element is animated.
                 <div class="form-group">
                     <button type="button" id="submitLayerLink"
                             class="button button-primary button-large"><?php echo esc_html_e('Add Link', 'jmsslider'); ?></button>
+                    <button type="button" id="updateLayerLink"
+                            class="button button-primary button-large"><?php echo esc_html_e('Edit Link', 'jmsslider'); ?></button>
                 </div>
             </div>
         </div>
@@ -836,6 +902,8 @@ the direction-type values define the direction in which the element is animated.
         <input type="hidden" id="mw" name="mw" value="<?php echo $_width; ?>"/>
         <input type="hidden" id="mh" name="mh" value="<?php echo $_height; ?>"/>
         <input type="hidden" id="layersjson" name="layersjson" value=""/>
+        <input type="hidden" id="slidejson" name="slidejson" value=""/>
+        <input type="hidden" id="slidetitle" name="slidetitle" value=""/>
         <input type="hidden" name="id_slide" value="<?php echo $id; ?>"/>
         <input type="hidden" id="root_url" name="root_url" value="<?php echo site_url(); ?>"/>
     </form>
@@ -845,6 +913,7 @@ the direction-type values define the direction in which the element is animated.
 </div>
 
 <script>
+    var bg_type = '<?php echo $bg_type; ?>';
     function openCity(evt, cityName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontent");
