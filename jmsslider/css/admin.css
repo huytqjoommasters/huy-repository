@@ -1177,11 +1177,16 @@
 	position: relative;
 	margin:0 5px;
 	overflow: hidden;
+	border: 1px dashed #ddd;
+}
+.list-slides li:hover {
+	border: 1px solid #242424;
 }
 .list-slides li .slide-bg {
 	display: block;
 	width: 200px;
 	height: 130px;
+	background-image:url('../images/pattern/transparent.png');
 }
 .list-slides li .slide-title {
 	position: absolute;
@@ -1225,4 +1230,40 @@
 }
 .wp-picker-holder {
 	position: absolute;
+}
+
+.item-slide.add .add-slide-btn {
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	top: 0;
+	left: 0;
+	text-decoration: none;
+	width: 100%;
+	height: 100%;
+}
+.list-slides li .add-slide-btn .dashicons {
+	font-size: 36px;
+	width: 36px;
+	height: 36px;
+}
+.item-slide.add .slide-bg{
+	background-image:url('../images/pattern/transparent.png');
+}
+
+.layerconfig .responsive-list {
+	display: inline-block;
+}
+.responsive-list-wrapper {
+	text-align: center;
+}
+.responsive-list li.button {
+	display: inline-block;
+	border:1px solid #eee;
+	cursor: pointer;
+	height: auto;
+	line-height:1;
+	padding: 10px;
+	margin: 0 5px;
 }

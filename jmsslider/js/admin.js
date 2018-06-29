@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-    var datakeys = ['title', 'type', 'text', 'url', 'attachment_id', 'visibility', 'class', 'delay', 'time', 'x', 'y', 'layerwidthtext', 'layerheighttext', 'z_index', 'width', 'height', 'in', 'out', 'ease_in', 'ease_out', 'transform_in', 'transform_out', 'step', 'special', 'autoplay', 'loop', 'controls', 'videobg', 'videotype', 'videoid', 'fontsize', 'textcolor', 'align', 'offset', 'fontstyle', 'fontweight', 'link', 'letterspacing', 'texttransform', 'mx', 'my', 'mletterspacing', 'malign', 'mfontsize', 'moffset', 'mfontweight', 'mtexttransform', 'mlineheight',];
+    var datakeys = ['title', 'type', 'text', 'url', 'attachment_id', 'visibility', 'class', 'delay', 'time', 'x', 'y', 'layerwidthtext', 'layerheighttext', 'z_index', 'width', 'height', 'in', 'out', 'ease_in', 'ease_out', 'transform_in', 'transform_out', 'step', 'special', 'autoplay', 'loop', 'controls', 'videobg', 'videotype', 'videoid', 'fontsize', 'textcolor', 'align', 'offset', 'fontstyle', 'fontweight', 'link', 'letterspacing', 'texttransform', 'mx', 'my', 'mletterspacing', 'malign', 'mfontsize', 'moffset', 'mfontweight', 'mtexttransform', 'mlineheight', 'mvisibility', 'tbx', 'tby', 'tbletterspacing', 'tbalign', 'tbfontsize', 'tboffset', 'tbfontweight', 'tbtexttransform', 'tblineheight', 'tbvisibility'];
     jQuery('.jms-delete-item').click(function () {
         var c = confirm('Are you sure want to delete this item?');
         if (!c) {
@@ -100,7 +100,6 @@ jQuery(document).ready(function ($) {
         jQuery(this).closest('.layers-list').find('#quick-layers-wrapper').toggleClass('show-list');
     });
     jQuery(document).ready(function(){
-
         jQuery("#layer_type").val( jQuery("#frame_layer .active").data("type") );
         jQuery("#layer_title").val( jQuery("#frame_layer .active").data("title") );
         jQuery("#layer_text").val( jQuery("#frame_layer .active").data("text") );
@@ -135,7 +134,6 @@ jQuery(document).ready(function ($) {
                 var ip_bg = jQuery("#image_url").val();
                 var root_url = jQuery("#root_url").val();
                 var img_url = root_url + ip_bg;
-                alert(img_url);
                 if( ip_bg != "" ) {
                     jQuery("#frame_layer").css( "background-image", 'url('+img_url+')' );
                     jQuery("#frame_layer").css( "background-color", 'none' );
@@ -280,65 +278,195 @@ jQuery(document).ready(function ($) {
         });
         /* ------ */
         layerListClick();
+        /* Responsive Button Event */
+        jQuery(".tab > .style-mobile").hide();
+        jQuery(".tab > .style-tablet").hide();
         var sw = $(".slider-background").data("width");
         var sh = $(".slider-background").data("height");
+        var th = $(".slider-background").data("tablet_height");
         var mh = $(".slider-background").data("mobile_height");
-        jQuery('.layerconfig .tab > button').each( function(){
-            jQuery(this).click( function(){
+        jQuery(".responsive-list > li").click(function (e) {
+            e.preventDefault();
+            if( jQuery(this).hasClass('mobile') && jQuery(this).is(':not(.active)') ) {
+                jQuery(".responsive-list > li").removeClass('active');
+                jQuery(this).addClass('active');
+                jQuery(".tab > .desktop-show").hide();
+                jQuery(".tab > .style-tablet").hide();
+                jQuery(".tab > .style-mobile").show();
+                jQuery("#show-layer").hide();
+                jQuery(".tab > .tablinks").each(function () {
+                    jQuery(this).removeClass('active');
+                    if( jQuery(this).hasClass('style-mobile') ) {
+                        jQuery(this).addClass('active');
+                        jQuery('.inner > .tabcontent').css('display', 'none');
+                        jQuery('#tab_style_mobile').css('display', 'block');
+                    }
+                });
+                /* Resize slider*/
                 var $_layers = jQuery('#frame_layer').find('.tp-caption');
-                if( jQuery(this).hasClass('style-mobile') && jQuery(this).hasClass('active') ) {
-                    $(".slider-background").css("width", 480);
-                    $(".slider-background").css("height", mh);
-
-                    $_layers.each(function (index) {
-                        jQuery(this).css( "top", jQuery(this).data("my") );
-                        jQuery(this).css( "left", jQuery(this).data("mx") );
-                        jQuery(this).css( "font-size", jQuery(this).data("mfontsize") );
-                        jQuery(this).css( "letter-spacing", jQuery(this).data("mletterspacing") );
-                        jQuery(this).css( "font-weight", jQuery(this).data("mfontweight") );
-                        jQuery(this).css( "text-transform", jQuery(this).data("mtexttransform") );
-                        jQuery(this).css( "line-height", jQuery(this).data("mlineheight") + "px" );
-                        jQuery(this).draggable({
-                            stop: function (event, ui) {
-                                // Show dropped position.
-                                var Stoppos = jQuery(this).position();
-                                jQuery('#layer_mx').val(Math.round(Stoppos.left));
-                                jQuery('#layer_my').val(Math.round(Stoppos.top));
-                                jQuery(this).attr('data-mx', Math.round(Stoppos.left));
-                                jQuery(this).attr('data-my', Math.round(Stoppos.top));	//truyen bien len input
-                                var mx = Math.round(Stoppos.left);
-                                var my = Math.round(Stoppos.top);
-                                dl = jQuery('#frame_layer'),
-                                    l = parseInt(dl.offset().left, 0) - parseInt(jQuery('#wrap-slider').offset().left, 0);
-                                jQuery('#verlinie').css({left: mx + l + "px"});
-                                jQuery('#horlinie').css({top: my + 38 + "px"});
-                                jQuery('#verlinetext').html(mx);
-                                jQuery('#horlinetext').html(my);
-                            }
-                        });
-                    });
-
-                    jQuery('.layer-data-mobile').change(function (e) {
-                        var name = jQuery(this).attr("name");
-                        var value = jQuery(this).val();
-                        jQuery('#frame_layer .active').eq(0).attr('data-' + name, value);
-                        if (name == 'mx') {
-                            jQuery('#frame_layer .active').css('left', value + 'px');
+                jQuery(".slider-background").css("width", 480);
+                jQuery(".slider-background").css("height", mh);
+                jQuery();
+                $_layers.each(function (index) {
+                    jQuery(this).css( "top", jQuery(this).data("my") );
+                    jQuery(this).css( "left", jQuery(this).data("mx") );
+                    jQuery(this).css( "font-size", jQuery(this).data("mfontsize") );
+                    jQuery(this).css( "letter-spacing", jQuery(this).data("mletterspacing") );
+                    jQuery(this).css( "font-weight", jQuery(this).data("mfontweight") );
+                    jQuery(this).css( "text-transform", jQuery(this).data("mtexttransform") );
+                    jQuery(this).css( "line-height", jQuery(this).data("mlineheight") + "px" );
+                    jQuery(this).draggable({
+                        stop: function (event, ui) {
+                            // Show dropped position.
+                            var Stoppos = jQuery(this).position();
+                            jQuery('#layer_mx').val(Math.round(Stoppos.left));
+                            jQuery('#layer_my').val(Math.round(Stoppos.top));
+                            jQuery(this).attr('data-mx', Math.round(Stoppos.left));
+                            jQuery(this).attr('data-my', Math.round(Stoppos.top));	//truyen bien len input
+                            var mx = Math.round(Stoppos.left);
+                            var my = Math.round(Stoppos.top);
+                            dl = jQuery('#frame_layer'),
+                                l = parseInt(dl.offset().left, 0) - parseInt(jQuery('#wrap-slider').offset().left, 0);
+                            jQuery('#verlinie').css({left: mx + l + "px"});
+                            jQuery('#horlinie').css({top: my + 38 + "px"});
+                            jQuery('#verlinetext').html(mx);
+                            jQuery('#horlinetext').html(my);
                         }
-                        if (name == 'my')
-                            jQuery('#frame_layer .active').css('top', value + 'px');
-                        if (name == 'mfontsize')
-                            jQuery('#frame_layer .active').css('font-size', value + 'px');
-                        if (name == 'mletterspacing')
-                            jQuery('#frame_layer .active').css('letter-spacing', value + 'px');
-                        if (name == 'mfontweight')
-                            jQuery('#frame_layer .active').css('font-weight', value);
-                        if (name == 'mtexttransform')
-                            jQuery('#frame_layer .active').css('text-transform', value);
-                        if (name == 'mlineheight')
-                            jQuery('#frame_layer .active').css('line-height', value + 'px');
                     });
-                } else {
+                });
+                jQuery('#frame_layer > .tp-caption').each(function () {
+                    jQuery(this).css('opacity', 1 );
+                    if( jQuery(this).data("mvisibility") == 0 ) {
+                        jQuery(this).css('opacity', 0.3 );
+                    }
+                });
+                jQuery('.layer-data-mobile').change(function (e) {
+                    var name = jQuery(this).attr("name");
+                    var value = jQuery(this).val();
+                    jQuery('#frame_layer .active').eq(0).attr('data-' + name, value);
+                    if (name == 'mx') {
+                        jQuery('#frame_layer .active').css('left', value + 'px');
+                    }
+                    if (name == 'my')
+                        jQuery('#frame_layer .active').css('top', value + 'px');
+                    if (name == 'mfontsize')
+                        jQuery('#frame_layer .active').css('font-size', value + 'px');
+                    if (name == 'mletterspacing')
+                        jQuery('#frame_layer .active').css('letter-spacing', value + 'px');
+                    if (name == 'mfontweight')
+                        jQuery('#frame_layer .active').css('font-weight', value);
+                    if (name == 'mtexttransform')
+                        jQuery('#frame_layer .active').css('text-transform', value);
+                    if (name == 'mlineheight')
+                        jQuery('#frame_layer .active').css('line-height', value + 'px');
+                    if (name == 'mvisibility') {
+                        if ( jQuery(this).val() == 0 ) {
+                            jQuery('#frame_layer .active').css('opacity', 0.3 );
+                        } else {
+                            jQuery('#frame_layer .active').css('opacity', 1 );
+                        }
+                    }
+                });
+                /* ----- */
+            } else if( jQuery(this).hasClass('tablet') && jQuery(this).is(':not(.active)') ) {
+                jQuery(".responsive-list > li").removeClass('active');
+                jQuery(this).addClass('active');
+                jQuery(".tab > .desktop-show").hide();
+                jQuery(".tab > .style-mobile").hide();
+                jQuery(".tab > .style-tablet").show();
+                jQuery("#show-layer").hide();
+                jQuery(".tab > .tablinks").each(function () {
+                    jQuery(this).removeClass('active');
+                    if( jQuery(this).hasClass('style-tablet') ) {
+                        jQuery(this).addClass('active');
+                        jQuery('.inner > .tabcontent').css('display', 'none');
+                        jQuery('#tab_style_tablet').css('display', 'block');
+                    }
+                });
+                /* Resize Tablet Slider */
+                var $_layers = jQuery('#frame_layer').find('.tp-caption');
+                $(".slider-background").css("width", 991);
+                $(".slider-background").css("height", th);
+                $_layers.each(function (index) {
+                    jQuery(this).css( "top", jQuery(this).data("tby") );
+                    jQuery(this).css( "left", jQuery(this).data("tbx") );
+                    jQuery(this).css( "font-size", jQuery(this).data("tbfontsize") );
+                    jQuery(this).css( "letter-spacing", jQuery(this).data("tbletterspacing") );
+                    jQuery(this).css( "font-weight", jQuery(this).data("tbfontweight") );
+                    jQuery(this).css( "text-transform", jQuery(this).data("tbtexttransform") );
+                    jQuery(this).css( "line-height", jQuery(this).data("tblineheight") + "px" );
+                    jQuery(this).draggable({
+                        stop: function (event, ui) {
+                            // Show dropped position.
+                            var Stoppos = jQuery(this).position();
+                            jQuery('#layer_mx').val(Math.round(Stoppos.left));
+                            jQuery('#layer_my').val(Math.round(Stoppos.top));
+                            jQuery(this).attr('data-tbx', Math.round(Stoppos.left));
+                            jQuery(this).attr('data-tby', Math.round(Stoppos.top));	//truyen bien len input
+                            var tbx = Math.round(Stoppos.left);
+                            var tby = Math.round(Stoppos.top);
+                            dl = jQuery('#frame_layer'),
+                                l = parseInt(dl.offset().left, 0) - parseInt(jQuery('#wrap-slider').offset().left, 0);
+                            jQuery('#verlinie').css({left: tbx + l + "px"});
+                            jQuery('#horlinie').css({top: tby + 38 + "px"});
+                            jQuery('#verlinetext').html(tbx);
+                            jQuery('#horlinetext').html(tby);
+                        }
+                    });
+                });
+                jQuery('.layer-data-tablet').change(function (e) {
+                    var name = jQuery(this).attr("name");
+                    var value = jQuery(this).val();
+                    jQuery('#frame_layer .active').eq(0).attr('data-' + name, value);
+                    if (name == 'tbx') {
+                        jQuery('#frame_layer .active').css('left', value + 'px');
+                    }
+                    if (name == 'tby')
+                        jQuery('#frame_layer .active').css('top', value + 'px');
+                    if (name == 'tbfontsize')
+                        jQuery('#frame_layer .active').css('font-size', value + 'px');
+                    if (name == 'tbletterspacing')
+                        jQuery('#frame_layer .active').css('letter-spacing', value + 'px');
+                    if (name == 'tbfontweight')
+                        jQuery('#frame_layer .active').css('font-weight', value);
+                    if (name == 'tbtexttransform')
+                        jQuery('#frame_layer .active').css('text-transform', value);
+                    if (name == 'tblineheight')
+                        jQuery('#frame_layer .active').css('line-height', value + 'px');
+                    if (name == 'tbvisibility') {
+                        if ( jQuery(this).val() == 0 ) {
+                            jQuery('#frame_layer .active').css('opacity', 0.3 );
+                        } else {
+                            jQuery('#frame_layer .active').css('opacity', 1 );
+                        }
+                    }
+                });
+                /* ------- */
+            } else {
+                if( jQuery(this).is(':not(.active)') ){
+                    jQuery('#frame_layer > .tp-caption').each(function () {
+                        if( jQuery(this).data("visibility") == 0 ) {
+                            jQuery(this).css('opacity', 0.3 );
+                        } else {
+                            jQuery(this).css('opacity', 1 );
+                        }
+                    });
+                    jQuery(".responsive-list > li").removeClass('active');
+                    jQuery(this).addClass('active');
+                    jQuery(".tab > .desktop-show").show();
+                    jQuery(".tab > .style-mobile").hide();
+                    jQuery(".tab > .style-tablet").hide();
+                    jQuery("#show-layer").show();
+                    jQuery(".tab > .tablinks").each(function () {
+                        jQuery(this).removeClass('active');
+                        if( jQuery(this).hasClass('layer') ) {
+                            jQuery(this).addClass('active');
+                            jQuery('.inner > .tabcontent').css('display', 'none');
+                            jQuery('#tab_setting').css('display', 'block');
+                        }
+                    });
+                    /* Resume slider size */
+                    var $_layers = jQuery('#frame_layer').find('.tp-caption');
                     $(".slider-background").css("width", sw);
                     $(".slider-background").css("height", sh);
 
@@ -370,9 +498,11 @@ jQuery(document).ready(function ($) {
                             jQuery('#horlinetext').html(my);
                         }
                     });
+                    /* ------ */
                 }
-            });
+            }
         });
+        /* ------ */
     });
 
 

@@ -93,3 +93,13 @@
 .fs-custom-pager-wrapper .active{
 	background: #1abc9c;
 }
+@media(max-width: 991px) and (min-width: 481px) {
+	.slide .hidden-tablet {
+		display: none !important;
+	}
+}
+@media(max-width: 480px) {
+	.slide .hidden-mobile {
+		display: none !important;
+	}
+}

@@ -52,6 +52,7 @@
                 'responsive' : false, // activates the responsive slider
                 'increase' : false, // if set, slider is allowed to get bigger than basic dimensions
                 'dimensions' : '', // set basic dimension (width,height in px) for the responisve slider - the plugin with position elements with data-position relative to this dimensions (please see the documentation for more info),
+                'tabletHeight' : 'auto',
                 'mobileHeight' : 'auto',
                 'startCallback' : null,
                 'startNextSlideCallback' : null,
@@ -619,6 +620,9 @@
                 obj.addClass('fs-animation');
 
                 var position = obj.attr("data-position");
+                if ( $( window ).width() >= 480 && $( window ).width() < 992 && obj.attr("data-position-tablet") !== undefined ){
+                    position = obj.attr("data-position-tablet");
+                }
                 if ( $( window ).width() < 480 && obj.attr("data-position-mobile") !== undefined ){
                     position = obj.attr("data-position-mobile");
                 }
@@ -1142,10 +1146,19 @@
                 objs.each(function() {
                     var obj = $(this), x = null, y = null, value = null;
                     // calculate % position
+                    if (obj.attr("data-position-tablet") !== undefined) {
+                        var tbdX = slider.innerWidth();
+                        var tbdY = slider.innerHeight();
 
+                        var position = obj.attr("data-position-tablet").split(',');
+                        var tbx = pixelToPercent(position[1], tbdX);
+                        var tby = pixelToPercent(position[0], tbdY);
+
+                        obj.attr("data-position-tablet", tby + ',' + tbx);
+                    }
                     if (obj.attr("data-position-mobile") !== undefined) {
                         var mdX = slider.innerWidth();
-                        var mdY = slider.innerHeight()
+                        var mdY = slider.innerHeight();
 
                         var position = obj.attr("data-position-mobile").split(',');
                         var mx = pixelToPercent(position[1], mdX);
@@ -1246,6 +1259,10 @@
                         'width' : w + 'px',
                         'height' : nH + "px"
                     });
+                }
+                if(w >= 480 && w < 992 ) {
+                    if(options.tabletHeight <= 0) options.tabletHeight = 'auto';
+                    slider.css('height', options.tabletHeight);
                 }
                 if(w < 480) {
                     if(options.mobileHeight <= 0) options.mobileHeight = 'auto';

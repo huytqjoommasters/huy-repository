@@ -111,7 +111,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="radio" id="bg_image" name="bg_type" value="image" <?php if(isset($bg_type) && $bg_type == 'image') {?>checked="checked"<?php } ?> > <?php echo esc_html_e( 'Image', 'jmsslider' );?>
                 <input type="hidden" id="image_url" name="bg_image" value="<?php if(isset($bg_type) && !empty($bg_image)) { echo $bg_image; }?>" >
                 <button id="pick_images" class="button"><?php echo esc_html_e( 'Select Images', 'jmsslider' );?></button>
-                <?php if(!empty($bg_image)) {?><div class="img-preview"><span class="button"><?php echo esc_html_e( 'Preview', 'jmsslider' );?></span><img src="<?php echo site_url().$bg_image;?>" /></div><?php } ?>
             </div>
             <div class="row-input">
                 <label for="bg_type"><?php echo esc_html_e( 'Background Color', 'jmsslider' );?></label>
@@ -221,19 +220,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="area-display">
         <div class="layerconfig layer-col">
             <div class="inner">
+                <div class="responsive-list-wrapper">
+                    <ul class="responsive-list">
+                        <li class="item button desktop active" title="<?php echo esc_html_e('Style on Desktop', 'jmsslider'); ?>"><i class="dashicons dashicons-desktop"></i></li>
+                        <li class="item button tablet" title="<?php echo esc_html_e('Style on Tablet', 'jmsslider'); ?>"><i class="dashicons dashicons-tablet"></i></li>
+                        <li class="item button mobile" title="<?php echo esc_html_e('Style on Mobile', 'jmsslider'); ?>"><i class="dashicons dashicons-smartphone"></i></li>
+                    </ul>
+                </div>
                 <div class="tab">
-                    <button class="tablinks" onclick="openCity(event, 'tab_setting')"
+                    <button class="tablinks layer" onclick="openCity(event, 'tab_setting')"
                             id="defaultOpen"><?php echo esc_html_e('Layer Setting', 'jmsslider'); ?></button>
-                    <button class="tablinks"
+                    <button class="tablinks desktop-show"
                             onclick="openCity(event, 'tab_style')"><?php echo esc_html_e('Style', 'jmsslider'); ?></button>
-                    <button class="tablinks"
+                    <button class="tablinks desktop-show"
                             onclick="openCity(event, 'tab_position')"><?php echo esc_html_e('Position', 'jmsslider'); ?></button>
                     <button class="tablinks"
                             onclick="openCity(event, 'tab_animation')"><?php echo esc_html_e('Animation', 'jmsslider'); ?></button>
                     <button class="tablinks video-settings"
                             onclick="openCity(event, 'tab_video_set')"><?php echo esc_html_e('Video Layer Setting', 'jmsslider'); ?></button>
+                    <button class="tablinks style-tablet"
+                            onclick="openCity(event, 'tab_style_tablet')"><?php echo esc_html_e('Style Tablet < 992', 'jmsslider'); ?></button>
                     <button class="tablinks style-mobile"
-                            onclick="openCity(event, 'tab_style_mobile')"><?php echo esc_html_e('Style Moblie < 480', 'jmsslider'); ?></button>
+                            onclick="openCity(event, 'tab_style_mobile')"><?php echo esc_html_e('Style Moblie < 481', 'jmsslider'); ?></button>
                 </div>
                 <div id="tab_setting" class="tabcontent row">
                     <div class="col-2-10">
@@ -335,6 +343,113 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                step="0.1" type="number"> px
                     </div>
                 </div>
+                <div id="tab_style_tablet" class="tabcontent row">
+                    <div class="row">
+                        <div class="field-box">
+                            <label>
+                                <i class="icon-horizontal icon-slider" title="Move Horizontal"> </i>
+                                <div class="tooltip"><?php echo esc_html_e('Data X Position, Left Offset In Pixel', 'jmsslider'); ?></div>
+                            </label>
+                            <input type="number" name="tbx" id="layer_tbx" class="layer-data-tablet" value=""> px
+                        </div>
+                        <div class="field-box">
+                            <label>
+                                <i class="icon-vertical icon-slider" title="Move Vertical"> </i>
+                                <div class="tooltip"><?php echo esc_html_e('Data Y Position, Top Offset In Pixel', 'jmsslider'); ?></div>
+                            </label>
+                            <input type="number" name="tby" id="layer_tby" class="layer-data-tablet" value=""> px
+                        </div>
+                        <div class="field-box">
+                            <label>
+                                <i class="icon-align icon-slider" title="Edit align"> </i>
+                                <div class="tooltip"><?php echo esc_html_e('Align for Layer, Left : data X Will = 0, Right Data X will = 100%, Center Data X will = ([slide width] - [object x])/2.Note : When use Data Align Data X will not avaiable.', 'jmsslider'); ?></div>
+                            </label>
+                            <select name="tbalign" id="layer_tbalign" class="layer-data-tablet">
+                                <option selected="" value=""><?php echo esc_html_e('none', 'jmsslider'); ?></option>
+                                <option value="left"><?php echo esc_html_e('Left', 'jmsslider'); ?></option>
+                                <option value="right"><?php echo esc_html_e('Right', 'jmsslider'); ?></option>
+                                <option value="center"><?php echo esc_html_e('Center', 'jmsslider'); ?></option>
+                            </select>
+                        </div>
+                        <div class="field-box">
+                            <label>
+                                <i class="icon-alignoffset icon-slider" title="Align offset"> </i>
+                                <div class="tooltip"><?php echo esc_html_e('Align Offset : Offset from align direction (Left, Right, Center). If set align "Right" it will offset with right side, if set align "Left" it will offset with left side, if set align "Center" it will offset with center of slider, example -30 will shift to left 30px, 30 will shift to right 30px.', 'jmsslider'); ?></div>
+                            </label>
+                            <input type="number" name="tboffset" id="layer_tboffset" class="layer-data-tablet" value="20"> (px)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="field-box">
+                            <label>
+                                <i class="icon-fontsize icon-slider" title="Font size"> </i>
+                                <div class="tooltip"><?php echo esc_html_e('Font Size', 'jmsslider'); ?></div>
+                            </label>
+                            <input name="tbfontsize" id="layer_tbfontsize" class="layer-data-tablet" value="20" type="number"> px
+                        </div>
+                        <div class="field-box">
+                            <label>
+                                <i class="icon-letterspacing icon-slider" title="Letter Spacing"></i>
+                                <div class="tooltip"><?php echo esc_html_e('Letter Spacing', 'jmsslider'); ?></div>
+                            </label>
+                            <input name="tbletterspacing" id="layer_tbletterspacing" class="layer-data-tablet" value="0" min="0"
+                                   max="10" step="0.1" type="number"> px
+                        </div>
+                        <div class="field-box">
+                            <label>
+                                <i class="icon-fontweight icon-slider" title="Font Weight"> </i>
+                                <div class="tooltip"><?php echo esc_html_e('Font Weight', 'jmsslider'); ?></div>
+                            </label>
+                            <select name="tbfontweight" id="layer_tbfontweight" class="layer-data-tablet">
+                                <option value="100"><?php echo esc_html_e('100', 'jmsslider'); ?></option>
+                                <option value="200"><?php echo esc_html_e('200', 'jmsslider'); ?></option>
+                                <option value="300"><?php echo esc_html_e('300', 'jmsslider'); ?></option>
+                                <option value="400"
+                                        selected="selected"><?php echo esc_html_e('400(normal)', 'jmsslider'); ?></option>
+                                <option value="500"><?php echo esc_html_e('500', 'jmsslider'); ?></option>
+                                <option value="600"><?php echo esc_html_e('600', 'jmsslider'); ?></option>
+                                <option value="700"><?php echo esc_html_e('700(bold)', 'jmsslider'); ?></option>
+                                <option value="800"><?php echo esc_html_e('800', 'jmsslider'); ?></option>
+                                <option value="900"><?php echo esc_html_e('900', 'jmsslider'); ?></option>
+                            </select>
+                        </div>
+                        <div class="field-box">
+                            <label>
+                                <i class="icon-transform icon-slider" title="Text Transform"> </i>
+                                <div class="tooltip"><?php echo esc_html_e('Text Transform', 'jmsslider'); ?></div>
+                            </label>
+                            <select name="tbtexttransform" id="layer_tbtexttransform" class="layer-data-tablet">
+                                <option value="none"
+                                        selected="selected"><?php echo esc_html_e('none', 'jmsslider'); ?></option>
+                                <option value="uppercase"><?php echo esc_html_e('uppercase', 'jmsslider'); ?></option>
+                                <option value="lowercase"><?php echo esc_html_e('lowercase', 'jmsslider'); ?></option>
+                                <option value="capitalize"><?php echo esc_html_e('capitalize', 'jmsslider'); ?></option>
+                            </select>
+                        </div>
+                        <div class="field-box">
+                            <label>
+                                <i class="icon-lineheight icon-slider" title="Line Height"> </i>
+                                <div class="tooltip"><?php echo esc_html_e('Line Height', 'jmsslider'); ?></div>
+                            </label>
+                            <input name="tblineheight" id="layer_tblineheight" class="layer-data-tablet" value="0" min="1"
+                                   max="10" step="0.1" type="number"> px
+                        </div>
+                        <div class="field-box">
+                            <label>
+                                <i class="dashicons dashicons-visibility" title="Tablet Visibility"> </i>
+                                <div class="tooltip"><?php echo esc_html_e('Tablet Visibility', 'jmsslider'); ?></div>
+                            </label>
+                            <select name="tbvisibility" id="layer_tbvisibility" class="layer-data-tablet">
+                                <option value="1" selected="selected">
+                                    <?php echo esc_html_e('show', 'jmsslider'); ?>
+                                </option>
+                                <option value="0">
+                                    <?php echo esc_html_e('hidden', 'jmsslider'); ?>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <div id="tab_style_mobile" class="tabcontent row">
                     <div class="row">
                         <div class="field-box">
@@ -425,6 +540,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </label>
                             <input name="mlineheight" id="layer_mlineheight" class="layer-data-mobile" value="0" min="1"
                                    max="10" step="0.1" type="number"> px
+                        </div>
+                        <div class="field-box">
+                            <label>
+                                <i class="dashicons dashicons-visibility" title="Mobile Visibility"> </i>
+                                <div class="tooltip"><?php echo esc_html_e('Mobile Visibility', 'jmsslider'); ?></div>
+                            </label>
+                            <select name="mvisibility" id="layer_mvisibility" class="layer-data-mobile">
+                                <option value="1" selected="selected">
+                                    <?php echo esc_html_e('show', 'jmsslider'); ?>
+                                </option>
+                                <option value="0">
+                                    <?php echo esc_html_e('hidden', 'jmsslider'); ?>
+                                </option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -718,6 +847,7 @@ the direction-type values define the direction in which the element is animated.
                 <?php if ($_width){ ?> data-width="<?php echo $_width; ?>" <?php } ?>
                 <?php if ($_height){ ?> data-height="<?php echo $_height; ?>" <?php } ?>
                 <?php if ($_settings){ ?> data-mobile_height="<?php echo $_settings["mobile_height"]; ?>" <?php } ?>
+                <?php if ($_settings){ ?> data-tablet_height="<?php echo $_settings["tablet_height"]; ?>" <?php } ?>
                  style="<?php if ($_height) echo "height:" . $_height . "px;" ?><?php if ($_width) echo "width:" . $_width . "px;" ?>">
                 <div id="frame_layer" class="slider fraction-slider" style="<?php if ($bg_type == 'image') {
                     if (strpos($bg_image, "http") !== false) $bg_url = $bg_image; else $bg_url = site_url() . $bg_image;

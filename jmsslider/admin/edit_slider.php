@@ -68,6 +68,18 @@ $slide = $wpdb->get_results($_query);
         <?php
             }
         ?>
+            <li class="item-slide add">
+                <span class="slide-bg"></span>
+                <?php
+                    $new_slide_safe_link = wp_nonce_url( 'admin.php?page=jmssliderlayer&task=add_slide&id_slider='.$id, 'new_slide', 'new_slide_nonce' );
+                ?>
+                <div class="slide-title">
+                    <?php echo esc_html_e( 'New slider', 'jmsslider' );?>
+                </div>
+                <a href="<?php echo $new_slide_safe_link; ?>" class="add-slide-btn">
+                    <i class="dashicons dashicons-plus"></i>
+                </a>
+            </li>
         </ul>
 		<?php
 		if(isset($slider_row)) {
@@ -79,6 +91,7 @@ $slide = $wpdb->get_results($_query);
 			$max_width          = $j_setting->max_width;
 			$max_height         = $j_setting->max_height;
 			$mobile_height      = $j_setting->mobile_height;
+            $tablet_height      = $j_setting->tablet_height;
 			$background_animate = $j_setting->background_animate;
 			$background_ease    = $j_setting->background_ease;
 			$end_animate        = $j_setting->end_animate;
@@ -136,6 +149,16 @@ $slide = $wpdb->get_results($_query);
 					</label>
 					<input type="text" id="JMS_SLIDER_MAX_HEIGHT" name="JMS_SLIDER_MAX_HEIGHT" value="<?php if(isset($max_height)) {echo $max_height;} else {echo '450';} ?>"> <span>px</span>
 				</div>
+                <div class="form-group">
+                    <label for="JMS_SLIDER_MAX_HEIGHT"><?php echo esc_html_e( 'Tablet Height', 'jmsslider' );?>
+                        <div class="help">?
+                            <div class="help-block">
+                                <p><?php echo esc_html_e( 'Slide Height in Tablet', 'jmsslider' );?></p>
+                            </div>
+                        </div>
+                    </label>
+                    <input type="text" id="JMS_SLIDER_TABLET_HEIGHT" name="JMS_SLIDER_TABLET_HEIGHT" value="<?php if(isset($tablet_height)) {echo $tablet_height;} else {echo '450';} ?>"> <span>px</span>
+                </div>
 				<div class="form-group">
 					<label for="JMS_SLIDER_MAX_HEIGHT"><?php echo esc_html_e( 'Mobile Height', 'jmsslider' );?>
 						<div class="help">?
@@ -234,7 +257,6 @@ $slide = $wpdb->get_results($_query);
 </div>
 <?php
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
 		$errors = array();
 
 		if (empty($_POST['title'])) {
@@ -327,6 +349,11 @@ $slide = $wpdb->get_results($_query);
 		} else {
 			$max_height = intval($_POST['JMS_SLIDER_MAX_HEIGHT']);
 		}
+        if (empty($_POST['JMS_SLIDER_TABLET_HEIGHT'])) {
+            $tablet_height = '450';
+        } else {
+            $tablet_height = intval($_POST['JMS_SLIDER_TABLET_HEIGHT']);
+        }
 		if (empty($_POST['JMS_SLIDER_MOBILE_HEIGHT'])) {
 			$mobile_height = '300';
 		} else {
@@ -404,6 +431,7 @@ $slide = $wpdb->get_results($_query);
 			'speed_out'          => $speed_out,
 			'max_width'          => $max_width,
 			'max_height'         => $max_height,
+            'tablet_height'      => $tablet_height,
 			'mobile_height'      => $mobile_height,
 			'background_animate' => $bg_animate,
 			'background_ease'    => $bg_ease,

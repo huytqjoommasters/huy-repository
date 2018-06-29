@@ -34,7 +34,6 @@ $slides = $wpdb->get_results( "SELECT * FROM " . $wpdb->prefix . "jms_slider_sli
 	            <td id="cb"><span>#<?php echo esc_html_e( 'ID', 'jmsslider' );?></span></td>
 	            <th scope="col"><span><?php echo esc_html_e( 'Name', 'jmsslider' );?></span></th>
 	            <th scope="col" class="align-center"><span><?php echo esc_html_e( 'Layers Manager', 'jmsslider' );?></span></th>
-	            <th scope="col" class="align-center"><span><?php echo esc_html_e( 'Edit', 'jmsslider' );?></span></th>
 	            <th scope="col" class="align-center"><span><?php echo esc_html_e( 'Delete', 'jmsslider' );?></span></th>
 	        </tr>
 	    </thead>
@@ -49,7 +48,6 @@ $slides = $wpdb->get_results( "SELECT * FROM " . $wpdb->prefix . "jms_slider_sli
 	        	<td><span>#<?php echo $slide->id_slide; ?></span></td>
 	            <td><a href="<?php echo esc_attr($edit_slide_safe_link); ?>"><?php echo $slide->title; ?></a></td>
 	            <td class="align-center"><a href="<?php echo esc_attr($layers_safe_link); ?>" title="<?php echo esc_html_e( 'Layers Manager', 'jmsslider' );?>"><i class="dashicons dashicons-schedule"></i></a></td>
-	            <td class="align-center"><a href="<?php echo esc_attr($edit_slide_safe_link); ?>" title="<?php echo esc_html_e( 'Edit', 'jmsslider' );?>"><i class="dashicons dashicons-edit"></i></a></td>
 	            <td class="align-center"><a href="<?php echo esc_attr($delete_slide_safe_link); ?>" class="jms-delete-item" title="<?php echo esc_html_e( 'Delete', 'jmsslider' );?>"><i class="dashicons dashicons-trash"></i></a></td>
 	        </tr>
 		    <?php endforeach; ?>

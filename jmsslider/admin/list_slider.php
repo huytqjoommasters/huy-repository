@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' )) {
 }	
 global $wpdb;
 $query = "SELECT *  FROM " . $wpdb->prefix . "jms_sliders";
-$rows = $wpdb->get_results( $query );	
+$rows = $wpdb->get_results( $query );
 ?>
 <div class="wrap jmsslider">
 	<?php
