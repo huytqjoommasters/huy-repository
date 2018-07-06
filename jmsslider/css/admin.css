@@ -1267,3 +1267,35 @@
 	padding: 10px;
 	margin: 0 5px;
 }
+.wp-picker-holder {
+	z-index: 1001;
+}
+
+.import-export {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+    padding: 10px 0;
+}
+.import-export #import_file {
+    width: 150px;
+	height: 40px;
+	visibility: hidden;
+}
+.import-export #import_file.active {
+	visibility: visible;
+}
+.import-export a.button {
+	margin: 0 7px;
+	line-height: 1;
+	height: auto;
+	padding: 7px 10px;
+}
+.import-wrapper {
+	position: relative;
+}
+.import-wrapper #import_file {
+	position: absolute;
+	top: calc(100% + 23px);
+	right: 0;
+}

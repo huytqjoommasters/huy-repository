@@ -219,6 +219,14 @@ function jmsslider_page() {
             }
 			require 'admin/layers.php';
             break;
+        case 'export_slide':
+            if ( !isset( $_GET['export_nonce'] ) || ! wp_verify_nonce( $_GET['export_nonce'], 'export_' . $id ) ) {
+                die( 'Security check failure' );
+            }
+            include_once 'classes/JmsImportExport.php';
+            $export = new JmsImportExport();
+            $export->exportSlider($_GET['id']);
+            break;
         default:
             require 'admin/list_slider.php';
             break;

@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-    var datakeys = ['title', 'type', 'text', 'url', 'attachment_id', 'visibility', 'class', 'delay', 'time', 'x', 'y', 'layerwidthtext', 'layerheighttext', 'z_index', 'width', 'height', 'in', 'out', 'ease_in', 'ease_out', 'transform_in', 'transform_out', 'step', 'special', 'autoplay', 'loop', 'controls', 'videobg', 'videotype', 'videoid', 'fontsize', 'textcolor', 'align', 'offset', 'fontstyle', 'fontweight', 'link', 'letterspacing', 'texttransform', 'mx', 'my', 'mletterspacing', 'malign', 'mfontsize', 'moffset', 'mfontweight', 'mtexttransform', 'mlineheight', 'mvisibility', 'tbx', 'tby', 'tbletterspacing', 'tbalign', 'tbfontsize', 'tboffset', 'tbfontweight', 'tbtexttransform', 'tblineheight', 'tbvisibility'];
+    var datakeys = ['title', 'type', 'text', 'url', 'attachment_id', 'visibility', 'class', 'delay', 'time', 'x', 'y', 'layerwidthtext', 'layerheighttext', 'z_index', 'width', 'height', 'in', 'out', 'ease_in', 'ease_out', 'transform_in', 'transform_out', 'step', 'special', 'autoplay', 'loop', 'controls', 'videobg', 'videotype', 'videoid', 'fontsize', 'textcolor', 'align', 'offset', 'fontstyle', 'fontweight', 'link', 'letterspacing', 'texttransform', 'mobile-x', 'mobile-y', 'mobile-letterspacing', 'mobile-align', 'mobile-fontsize', 'mobile-offset', 'mobile-fontweight', 'mobile-texttransform', 'mobile-lineheight', 'mobile-visibility', 'tablet-x', 'tablet-y', 'tablet-letterspacing', 'tablet-align', 'tablet-fontsize', 'tablet-offset', 'tablet-fontweight', 'tablet-texttransform', 'tablet-lineheight', 'tablet-visibility'];
     jQuery('.jms-delete-item').click(function () {
         var c = confirm('Are you sure want to delete this item?');
         if (!c) {
@@ -262,249 +262,212 @@ jQuery(document).ready(function ($) {
         } else {
             jQuery("#show-layer").find('.dashicons-hidden').hide();
         }
+
         jQuery('#show-layer').click(function (e) {
-            if( layer_visibility.val() == 0 ) {
-                jQuery("#show-layer").find('.dashicons-hidden').hide();
-                jQuery("#show-layer").find('.dashicons-visibility').show();
-                layer_visibility.val(1);
-                jQuery('#frame_layer .tp-caption.active').css('opacity', 1);
-            } else {
-                jQuery("#show-layer").find('.dashicons-visibility').hide();
-                jQuery("#show-layer").find('.dashicons-hidden').show();
-                layer_visibility.val(0);
-                jQuery('#frame_layer .tp-caption.active').css('opacity', 0.3);
-            }
-            jQuery('#frame_layer .tp-caption.active').attr('data-visibility',layer_visibility.val());
+            layerBtnEvent(layer_visibility);
         });
+
+        jQuery('#show-mobile-layer').on('click', function () {
+            layerBtnEvent(layer_visibility);
+        });
+        jQuery('#show-tablet-layer').on('click', function () {
+            layerBtnEvent(layer_visibility);
+        });
+        
         /* ------ */
         layerListClick();
         /* Responsive Button Event */
-        jQuery(".tab > .style-mobile").hide();
-        jQuery(".tab > .style-tablet").hide();
+        jQuery(".tab > .tab-mobile").hide();
+        jQuery(".tab > .tab-tablet").hide();
+        jQuery(".tab > .video-settings").hide();
+
+
+        jQuery(".responsive-list > li").on('click', function () {
+            var res = jQuery(this).attr('id');
+            var this_li = jQuery(this);
+            responsive_tab(res, this_li);
+            resize_slider(res, this_li);
+            change_style(res, this_li);
+            showLayerBtn(res);
+        });
+        /* ------ */
+    });
+    /* Responsive function */
+    function responsive_tab($res, $this_li) {
+        if( $this_li.is(':not(.active)') ) {
+            jQuery(".responsive-list > li").removeClass('active');
+            $this_li.addClass('active');
+            jQuery(".tab > .tab-responsive").hide();
+            jQuery(".tab > .tab-" + $res).show();
+            jQuery(".tab > .tablinks").each(function () {
+                jQuery(this).removeClass('active');
+                if( jQuery(this).hasClass('tab-' + $res) ) {
+                    jQuery(this).addClass('active');
+                    jQuery('.inner > .tabcontent').css('display', 'none');
+                    jQuery('#tab_style_' + $res).css('display', 'block');
+                }
+            });
+        }
+    }
+    function resize_slider ($res, $this_li) {
         var sw = $(".slider-background").data("width");
         var sh = $(".slider-background").data("height");
         var th = $(".slider-background").data("tablet_height");
         var mh = $(".slider-background").data("mobile_height");
-        jQuery(".responsive-list > li").click(function (e) {
-            e.preventDefault();
-            if( jQuery(this).hasClass('mobile') && jQuery(this).is(':not(.active)') ) {
-                jQuery(".responsive-list > li").removeClass('active');
-                jQuery(this).addClass('active');
-                jQuery(".tab > .desktop-show").hide();
-                jQuery(".tab > .style-tablet").hide();
-                jQuery(".tab > .style-mobile").show();
-                jQuery("#show-layer").hide();
-                jQuery(".tab > .tablinks").each(function () {
-                    jQuery(this).removeClass('active');
-                    if( jQuery(this).hasClass('style-mobile') ) {
-                        jQuery(this).addClass('active');
-                        jQuery('.inner > .tabcontent').css('display', 'none');
-                        jQuery('#tab_style_mobile').css('display', 'block');
-                    }
-                });
-                /* Resize slider*/
-                var $_layers = jQuery('#frame_layer').find('.tp-caption');
-                jQuery(".slider-background").css("width", 480);
-                jQuery(".slider-background").css("height", mh);
-                jQuery();
-                $_layers.each(function (index) {
-                    jQuery(this).css( "top", jQuery(this).data("my") );
-                    jQuery(this).css( "left", jQuery(this).data("mx") );
-                    jQuery(this).css( "font-size", jQuery(this).data("mfontsize") );
-                    jQuery(this).css( "letter-spacing", jQuery(this).data("mletterspacing") );
-                    jQuery(this).css( "font-weight", jQuery(this).data("mfontweight") );
-                    jQuery(this).css( "text-transform", jQuery(this).data("mtexttransform") );
-                    jQuery(this).css( "line-height", jQuery(this).data("mlineheight") + "px" );
-                    jQuery(this).draggable({
-                        stop: function (event, ui) {
-                            // Show dropped position.
-                            var Stoppos = jQuery(this).position();
-                            jQuery('#layer_mx').val(Math.round(Stoppos.left));
-                            jQuery('#layer_my').val(Math.round(Stoppos.top));
-                            jQuery(this).attr('data-mx', Math.round(Stoppos.left));
-                            jQuery(this).attr('data-my', Math.round(Stoppos.top));	//truyen bien len input
-                            var mx = Math.round(Stoppos.left);
-                            var my = Math.round(Stoppos.top);
-                            dl = jQuery('#frame_layer'),
-                                l = parseInt(dl.offset().left, 0) - parseInt(jQuery('#wrap-slider').offset().left, 0);
-                            jQuery('#verlinie').css({left: mx + l + "px"});
-                            jQuery('#horlinie').css({top: my + 38 + "px"});
-                            jQuery('#verlinetext').html(mx);
-                            jQuery('#horlinetext').html(my);
-                        }
-                    });
-                });
-                jQuery('#frame_layer > .tp-caption').each(function () {
-                    jQuery(this).css('opacity', 1 );
-                    if( jQuery(this).data("mvisibility") == 0 ) {
-                        jQuery(this).css('opacity', 0.3 );
-                    }
-                });
-                jQuery('.layer-data-mobile').change(function (e) {
-                    var name = jQuery(this).attr("name");
-                    var value = jQuery(this).val();
-                    jQuery('#frame_layer .active').eq(0).attr('data-' + name, value);
-                    if (name == 'mx') {
-                        jQuery('#frame_layer .active').css('left', value + 'px');
-                    }
-                    if (name == 'my')
-                        jQuery('#frame_layer .active').css('top', value + 'px');
-                    if (name == 'mfontsize')
-                        jQuery('#frame_layer .active').css('font-size', value + 'px');
-                    if (name == 'mletterspacing')
-                        jQuery('#frame_layer .active').css('letter-spacing', value + 'px');
-                    if (name == 'mfontweight')
-                        jQuery('#frame_layer .active').css('font-weight', value);
-                    if (name == 'mtexttransform')
-                        jQuery('#frame_layer .active').css('text-transform', value);
-                    if (name == 'mlineheight')
-                        jQuery('#frame_layer .active').css('line-height', value + 'px');
-                    if (name == 'mvisibility') {
-                        if ( jQuery(this).val() == 0 ) {
-                            jQuery('#frame_layer .active').css('opacity', 0.3 );
-                        } else {
-                            jQuery('#frame_layer .active').css('opacity', 1 );
-                        }
-                    }
-                });
-                /* ----- */
-            } else if( jQuery(this).hasClass('tablet') && jQuery(this).is(':not(.active)') ) {
-                jQuery(".responsive-list > li").removeClass('active');
-                jQuery(this).addClass('active');
-                jQuery(".tab > .desktop-show").hide();
-                jQuery(".tab > .style-mobile").hide();
-                jQuery(".tab > .style-tablet").show();
-                jQuery("#show-layer").hide();
-                jQuery(".tab > .tablinks").each(function () {
-                    jQuery(this).removeClass('active');
-                    if( jQuery(this).hasClass('style-tablet') ) {
-                        jQuery(this).addClass('active');
-                        jQuery('.inner > .tabcontent').css('display', 'none');
-                        jQuery('#tab_style_tablet').css('display', 'block');
-                    }
-                });
-                /* Resize Tablet Slider */
-                var $_layers = jQuery('#frame_layer').find('.tp-caption');
-                $(".slider-background").css("width", 991);
-                $(".slider-background").css("height", th);
-                $_layers.each(function (index) {
-                    jQuery(this).css( "top", jQuery(this).data("tby") );
-                    jQuery(this).css( "left", jQuery(this).data("tbx") );
-                    jQuery(this).css( "font-size", jQuery(this).data("tbfontsize") );
-                    jQuery(this).css( "letter-spacing", jQuery(this).data("tbletterspacing") );
-                    jQuery(this).css( "font-weight", jQuery(this).data("tbfontweight") );
-                    jQuery(this).css( "text-transform", jQuery(this).data("tbtexttransform") );
-                    jQuery(this).css( "line-height", jQuery(this).data("tblineheight") + "px" );
-                    jQuery(this).draggable({
-                        stop: function (event, ui) {
-                            // Show dropped position.
-                            var Stoppos = jQuery(this).position();
-                            jQuery('#layer_mx').val(Math.round(Stoppos.left));
-                            jQuery('#layer_my').val(Math.round(Stoppos.top));
-                            jQuery(this).attr('data-tbx', Math.round(Stoppos.left));
-                            jQuery(this).attr('data-tby', Math.round(Stoppos.top));	//truyen bien len input
-                            var tbx = Math.round(Stoppos.left);
-                            var tby = Math.round(Stoppos.top);
-                            dl = jQuery('#frame_layer'),
-                                l = parseInt(dl.offset().left, 0) - parseInt(jQuery('#wrap-slider').offset().left, 0);
-                            jQuery('#verlinie').css({left: tbx + l + "px"});
-                            jQuery('#horlinie').css({top: tby + 38 + "px"});
-                            jQuery('#verlinetext').html(tbx);
-                            jQuery('#horlinetext').html(tby);
-                        }
-                    });
-                });
-                jQuery('.layer-data-tablet').change(function (e) {
-                    var name = jQuery(this).attr("name");
-                    var value = jQuery(this).val();
-                    jQuery('#frame_layer .active').eq(0).attr('data-' + name, value);
-                    if (name == 'tbx') {
-                        jQuery('#frame_layer .active').css('left', value + 'px');
-                    }
-                    if (name == 'tby')
-                        jQuery('#frame_layer .active').css('top', value + 'px');
-                    if (name == 'tbfontsize')
-                        jQuery('#frame_layer .active').css('font-size', value + 'px');
-                    if (name == 'tbletterspacing')
-                        jQuery('#frame_layer .active').css('letter-spacing', value + 'px');
-                    if (name == 'tbfontweight')
-                        jQuery('#frame_layer .active').css('font-weight', value);
-                    if (name == 'tbtexttransform')
-                        jQuery('#frame_layer .active').css('text-transform', value);
-                    if (name == 'tblineheight')
-                        jQuery('#frame_layer .active').css('line-height', value + 'px');
-                    if (name == 'tbvisibility') {
-                        if ( jQuery(this).val() == 0 ) {
-                            jQuery('#frame_layer .active').css('opacity', 0.3 );
-                        } else {
-                            jQuery('#frame_layer .active').css('opacity', 1 );
-                        }
-                    }
-                });
-                /* ------- */
-            } else {
-                if( jQuery(this).is(':not(.active)') ){
-                    jQuery('#frame_layer > .tp-caption').each(function () {
-                        if( jQuery(this).data("visibility") == 0 ) {
-                            jQuery(this).css('opacity', 0.3 );
-                        } else {
-                            jQuery(this).css('opacity', 1 );
-                        }
-                    });
-                    jQuery(".responsive-list > li").removeClass('active');
-                    jQuery(this).addClass('active');
-                    jQuery(".tab > .desktop-show").show();
-                    jQuery(".tab > .style-mobile").hide();
-                    jQuery(".tab > .style-tablet").hide();
-                    jQuery("#show-layer").show();
-                    jQuery(".tab > .tablinks").each(function () {
-                        jQuery(this).removeClass('active');
-                        if( jQuery(this).hasClass('layer') ) {
-                            jQuery(this).addClass('active');
-                            jQuery('.inner > .tabcontent').css('display', 'none');
-                            jQuery('#tab_setting').css('display', 'block');
-                        }
-                    });
-                    /* Resume slider size */
-                    var $_layers = jQuery('#frame_layer').find('.tp-caption');
-                    $(".slider-background").css("width", sw);
-                    $(".slider-background").css("height", sh);
-
-                    $_layers.each(function (index) {
-                        jQuery(this).css( "top", jQuery(this).data("y") );
-                        jQuery(this).css( "left", jQuery(this).data("x") );
-                        jQuery(this).css( "font-size", jQuery(this).data("fontsize") );
-                        jQuery(this).css( "letter-spacing", jQuery(this).data("letterspacing") );
-                        jQuery(this).css( "font-weight", jQuery(this).data("fontweight") );
-                        jQuery(this).css( "text-transform", jQuery(this).data("texttransform") );
-                        jQuery(this).css( "line-height", jQuery(this).data("lineheight") );
-                    });
-
-                    jQuery('.tp-caption').draggable({
-                        stop: function (event, ui) {
-                            // Show dropped position.
-                            var Stoppos = jQuery(this).position();
-                            jQuery('#layer_x').val(Math.round(Stoppos.left));
-                            jQuery('#layer_y').val(Math.round(Stoppos.top));
-                            jQuery(this).attr('data-x', Math.round(Stoppos.left));
-                            jQuery(this).attr('data-y', Math.round(Stoppos.top));	//truyen bien len input
-                            var mx = Math.round(Stoppos.left);
-                            var my = Math.round(Stoppos.top);
-                            dl = jQuery('#frame_layer'),
-                                l = parseInt(dl.offset().left, 0) - parseInt(jQuery('#wrap-slider').offset().left, 0);
-                            jQuery('#verlinie').css({left: mx + l + "px"});
-                            jQuery('#horlinie').css({top: my + 38 + "px"});
-                            jQuery('#verlinetext').html(mx);
-                            jQuery('#horlinetext').html(my);
-                        }
-                    });
-                    /* ------ */
+        if ( $res == 'mobile' ) {
+            jQuery(".slider-background").css("width", 480);
+            jQuery(".slider-background").css("height", mh);
+        } else if( $res == 'tablet' ) {
+            $(".slider-background").css("width", 991);
+            $(".slider-background").css("height", th);
+        } else {
+            $(".slider-background").css("width", sw);
+            $(".slider-background").css("height", sh);
+        }
+    }
+    function change_style($res, $this_li) {
+        var data = "";
+        if( $res == 'mobile' || $res == 'tablet') {
+            data = $res+'-';
+        }
+        var $_layers = jQuery('#frame_layer').find('.tp-caption');
+        $_layers.each(function (index) {
+            jQuery(this).css( "top", jQuery(this).data(data + "y") );
+            jQuery(this).css( "left", jQuery(this).data(data + "x") );
+            jQuery(this).css( "font-size", jQuery(this).data(data + "fontsize") );
+            jQuery(this).css( "letter-spacing", jQuery(this).data(data + "letterspacing") );
+            jQuery(this).css( "font-weight", jQuery(this).data(data + "fontweight") );
+            jQuery(this).css( "text-transform", jQuery(this).data(data + "texttransform") );
+            jQuery(this).css( "line-height", jQuery(this).data(data + "lineheight") + "px" );
+        });
+        $_layers.each(function (index) {
+            jQuery(this).draggable({
+                stop: function (event, ui) {
+                    // Show dropped position.
+                    var Stoppos = jQuery(this).position();
+                    jQuery('#layer_'+data+'x').val(Math.round(Stoppos.left));
+                    jQuery('#layer_'+data+'y').val(Math.round(Stoppos.top));
+                    jQuery(this).attr('data-'+data+'x', Math.round(Stoppos.left));
+                    jQuery(this).attr('data-'+data+'y', Math.round(Stoppos.top));	//truyen bien len input
+                    jQuery(this).data(data+'x', Math.round(Stoppos.left));
+                    jQuery(this).data(data+'y', Math.round(Stoppos.top));
+                    var mx = Math.round(Stoppos.left);
+                    var my = Math.round(Stoppos.top);
+                    dl = jQuery('#frame_layer'),
+                        l = parseInt(dl.offset().left, 0) - parseInt(jQuery('#wrap-slider').offset().left, 0);
+                    jQuery('#verlinie').css({left: mx + l + "px"});
+                    jQuery('#horlinie').css({top: my + 38 + "px"});
+                    jQuery('#verlinetext').html(mx);
+                    jQuery('#horlinetext').html(my);
+                }
+            });
+            jQuery(this).css('opacity', 1 );
+            if( jQuery(this).data(data+"visibility") == 0 ) {
+                jQuery(this).css('opacity', 0.3 );
+            }
+        });
+        var input_type = "";
+        if( $res == 'mobile' || $res == 'tablet') {
+            input_type = '-' + $res;
+        }
+        jQuery('.layer-data'+input_type).change(function (e) {
+            var name = jQuery(this).attr("name");
+            var value = jQuery(this).val();
+            jQuery('#frame_layer .active').eq(0).attr('data-' + name, value);
+            if (name == data+'x') {
+                jQuery('#frame_layer .active').css('left', value + 'px');
+            }
+            if (name == data+'y')
+                jQuery('#frame_layer .active').css('top', value + 'px');
+            if (name == data+'fontsize')
+                jQuery('#frame_layer .active').css('font-size', value + 'px');
+            if (name == data+'letterspacing')
+                jQuery('#frame_layer .active').css('letter-spacing', value + 'px');
+            if (name == data+'fontweight')
+                jQuery('#frame_layer .active').css('font-weight', value);
+            if (name == data+'texttransform')
+                jQuery('#frame_layer .active').css('text-transform', value);
+            if (name == data+'lineheight')
+                jQuery('#frame_layer .active').css('line-height', value + 'px');
+            if (name == data+'visibility') {
+                if ( jQuery(this).val() == 0 ) {
+                    jQuery('#frame_layer .active').css('opacity', 0.3 );
+                } else {
+                    jQuery('#frame_layer .active').css('opacity', 1 );
                 }
             }
         });
-        /* ------ */
-    });
-
+    }
+    function showLayerBtn($res) {
+        jQuery('.show-layer-btn').hide();
+        if ($res == 'tablet' || $res == 'mobile') {
+            var data = $res + '-';
+        }
+        if( $res == 'desktop' ) {
+            var data = '';
+        }
+        jQuery('#frame_layer .tp-caption').each(function (e) {
+            if( jQuery(this).data(data+ 'visibility') == 1 ) {
+                jQuery(this).css('opacity', 1);
+                jQuery('#show-'+data+'layer').find('.dashicons-hidden').hide();
+                jQuery('#show-'+data+'layer').find('.dashicons-visibility').show();
+            } else {
+                jQuery(this).css('opacity', 0.3);
+                jQuery('#show-'+data+'layer').find('.dashicons-hidden').show();
+                jQuery('#show-'+data+'layer').find('.dashicons-visibility').hide();
+            }
+        });
+        jQuery('#show-'+data+'layer').show();
+        var layer_visibility = jQuery('#layer_visibility');
+        layer_visibility.val("");
+        layer_visibility.val( jQuery('#frame_layer .tp-caption.active').data(data+'visibility') );
+        if( layer_visibility.val() == 0) {
+            jQuery('#show-'+data+'layer').find('.dashicons-visibility').hide();
+            jQuery('#show-'+data+'layer').find('.dashicons-hidden').show();
+        } else {
+            jQuery('#show-'+data+'layer').find('.dashicons-hidden').hide();
+            jQuery('#show-'+data+'layer').find('.dashicons-visibility').show();
+        }
+    }
+    function layerBtnEvent (layer_visibility) {
+        var $res = jQuery(".responsive-list > li.active").attr('id');
+        var data = "";
+        if( $res == 'mobile' || $res == 'tablet') {
+            data = $res+'-';
+            layer_visibility.val( jQuery('#frame_layer .tp-caption.active').data(data+'visibility') );
+        }
+        if( layer_visibility.val() == 0 ) {
+            jQuery('#show-'+data+'layer').find('.dashicons-hidden').hide();
+            jQuery('#show-'+data+'layer').find('.dashicons-visibility').show();
+            layer_visibility.val(1);
+            jQuery('#frame_layer .tp-caption.active').css('opacity', 1);
+        } else {
+            jQuery('#show-'+data+'layer').find('.dashicons-visibility').hide();
+            jQuery('#show-'+data+'layer').find('.dashicons-hidden').show();
+            layer_visibility.val(0);
+            jQuery('#frame_layer .tp-caption.active').css('opacity', 0.3);
+        }
+        jQuery('#frame_layer .tp-caption.active').attr('data-'+data+'visibility',layer_visibility.val());
+        jQuery('#frame_layer .tp-caption.active').data(data+'visibility',layer_visibility.val());
+    }
+    function changeLayerVis() {
+        var layer_visibility = jQuery('#layer_visibility');
+        layer_visibility.val( jQuery('#frame_layer .tp-caption.active').data('visibility') );
+        var $res = jQuery(".responsive-list > li.active").attr('id');
+        var data = "";
+        if( $res == 'mobile' || $res == 'tablet') {
+            data = $res+'-';
+            layer_visibility.val( jQuery('#frame_layer .tp-caption.active').data(data+'visibility') );
+        }
+        if( layer_visibility.val() == 0) {
+            jQuery('#show-'+data+'layer').find('.dashicons-visibility').hide();
+            jQuery('#show-'+data+'layer').find('.dashicons-hidden').show();
+        } else {
+            jQuery('#show-'+data+'layer').find('.dashicons-hidden').hide();
+            jQuery('#show-'+data+'layer').find('.dashicons-visibility').show();
+        }
+    }
+    /* ----- */
 
     /* */
     function layerListClick() {
@@ -523,15 +486,7 @@ jQuery(document).ready(function ($) {
                         jQuery(this).addClass('active');
                     }
                 });
-                var layer_visibility = jQuery('#layer_visibility');
-                layer_visibility.val( jQuery('#frame_layer .tp-caption.active').data('visibility') );
-                if( layer_visibility.val() == 0) {
-                    jQuery("#show-layer").find('.dashicons-visibility').hide();
-                    jQuery("#show-layer").find('.dashicons-hidden').show();
-                } else {
-                    jQuery("#show-layer").find('.dashicons-hidden').hide();
-                    jQuery("#show-layer").find('.dashicons-visibility').show();
-                }
+                changeLayerVis();
                 if (jQuery(this).data("type") == 'link') {
                     $('.linkurl').show();
                     jQuery("#layer_url").val( jQuery(this).data("link") );
@@ -746,16 +701,7 @@ jQuery(document).ready(function ($) {
                 $('#time-line li').removeClass('active');
                 $('#time-line li').eq(_index + 1).addClass('active');
             }
-            var layer_visibility = jQuery('#layer_visibility');
-            layer_visibility.val("");
-            layer_visibility.val( jQuery('.tp-caption.active').data('visibility') );
-            if( layer_visibility.val() == 0) {
-                jQuery("#show-layer").find('.dashicons-visibility').hide();
-                jQuery("#show-layer").find('.dashicons-hidden').show();
-            } else {
-                jQuery("#show-layer").find('.dashicons-hidden').hide();
-                jQuery("#show-layer").find('.dashicons-visibility').show();
-            }
+            changeLayerVis();
             jQuery('#quick-layers-list > li').each(function (index) {
                 jQuery(this).removeClass('active');
                 if( jQuery(this).data('type') == 'text' && jQuery(this).data('text') == jQuery('.tp-caption.active').data('text')  ) {
@@ -1047,8 +993,12 @@ jQuery(document).ready(function ($) {
     });
     jQuery('#save-layers').click(function (e) {
         var layer_params = JSON.stringify(getLayersJson());
+        if( jQuery('#importjson').val() != "" ) {
+            layer_params = jQuery('#importjson').val();
+        }
         var slide_params = JSON.stringify(getSlideJson());
         var slide_title = jQuery( "input[name='title']" ).val();
+        //console.log(layer_params);
         jQuery('#layersjson').val(layer_params);
         jQuery('#slidejson').val(slide_params);
         jQuery('#slidetitle').val(slide_title);
@@ -1056,7 +1006,16 @@ jQuery(document).ready(function ($) {
         layersForm.submit();
         return false;
     });
-
+    /* Import - Export */
+    jQuery('.import-wrapper > a').on('click', function (e) {
+        e.preventDefault();
+        jQuery('.import-wrapper > #import_file').toggleClass('active');
+        jQuery('.import-wrapper > #import_file').on('change', function () {
+            if( jQuery(this).val() != '' ) {
+                jQuery('#importjson').val( jQuery(this).val() );
+            }
+        });
+    });
 
     /**
      *
@@ -1099,6 +1058,8 @@ jQuery(document).ready(function ($) {
         tpl_caption.attr('data-type', 'text');
         tpl_caption.attr('data-text', text_layer);
         tpl_caption.attr('data-visibility', 1);
+        tpl_caption.attr('data-tablet-visibility', 1);
+        tpl_caption.attr('data-mobile-visibility', 1);
         jQuery('#frame_layer').append(tpl_caption);
 
         var layers_list = jQuery('<li data-type="text" data-text="' + text_layer + '"> <i class="dashicons dashicons-format-aside"></i> <span>' + text_layer + '</span> </li>');
