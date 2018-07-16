@@ -1277,12 +1277,10 @@
 	align-items: center;
     padding: 10px 0;
 }
-.import-export #import_file {
-    width: 150px;
-	height: 40px;
+.import-export #importtForm {
 	visibility: hidden;
 }
-.import-export #import_file.active {
+.import-export #importtForm.active {
 	visibility: visible;
 }
 .import-export a.button {
@@ -1294,8 +1292,10 @@
 .import-wrapper {
 	position: relative;
 }
-.import-wrapper #import_file {
+.import-wrapper #importtForm {
 	position: absolute;
-	top: calc(100% + 23px);
+	top: calc(100% + 25px);
 	right: 0;
+	display: flex;
+	padding: 0 15px;
 }

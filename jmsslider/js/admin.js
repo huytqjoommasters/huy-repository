@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-    var datakeys = ['title', 'type', 'text', 'url', 'attachment_id', 'visibility', 'class', 'delay', 'time', 'x', 'y', 'layerwidthtext', 'layerheighttext', 'z_index', 'width', 'height', 'in', 'out', 'ease_in', 'ease_out', 'transform_in', 'transform_out', 'step', 'special', 'autoplay', 'loop', 'controls', 'videobg', 'videotype', 'videoid', 'fontsize', 'textcolor', 'align', 'offset', 'fontstyle', 'fontweight', 'link', 'letterspacing', 'texttransform', 'mobile-x', 'mobile-y', 'mobile-letterspacing', 'mobile-align', 'mobile-fontsize', 'mobile-offset', 'mobile-fontweight', 'mobile-texttransform', 'mobile-lineheight', 'mobile-visibility', 'tablet-x', 'tablet-y', 'tablet-letterspacing', 'tablet-align', 'tablet-fontsize', 'tablet-offset', 'tablet-fontweight', 'tablet-texttransform', 'tablet-lineheight', 'tablet-visibility'];
+    var datakeys = ['title', 'type', 'text', 'url', 'attachment_id', 'img_id', 'visibility', 'class', 'delay', 'time', 'x', 'y', 'layerwidthtext', 'layerheighttext', 'z_index', 'width', 'height', 'in', 'out', 'ease_in', 'ease_out', 'transform_in', 'transform_out', 'step', 'special', 'autoplay', 'loop', 'controls', 'videobg', 'videotype', 'videoid', 'fontsize', 'textcolor', 'align', 'offset', 'fontstyle', 'fontweight', 'link', 'letterspacing', 'texttransform', 'mobile-x', 'mobile-y', 'mobile-letterspacing', 'mobile-align', 'mobile-fontsize', 'mobile-offset', 'mobile-fontweight', 'mobile-texttransform', 'mobile-lineheight', 'mobile-visibility', 'tablet-x', 'tablet-y', 'tablet-letterspacing', 'tablet-align', 'tablet-fontsize', 'tablet-offset', 'tablet-fontweight', 'tablet-texttransform', 'tablet-lineheight', 'tablet-visibility'];
     jQuery('.jms-delete-item').click(function () {
         var c = confirm('Are you sure want to delete this item?');
         if (!c) {
@@ -243,6 +243,7 @@ jQuery(document).ready(function ($) {
                         jQuery('#quick-layers-list > li').each(function () {
                             if (jQuery(this).data("attachment_id") == selected_id) {
                                 jQuery(this).attr('data-attachment_id', attachment['id']);
+                                jQuery(this).attr('data-img_id', 'image-'+attachment['id']);
                             }
                         });
                         tpl_caption.find('img').attr('data-src', jQuery('#root_url').val() + media_url);
@@ -477,12 +478,13 @@ jQuery(document).ready(function ($) {
                 var li_text = jQuery(this).data("text");
                 var li_url = jQuery(this).data("url");
                 var li_attachment_id = jQuery(this).data("attachment_id");
+                var li_img_id = jQuery(this).data("img_id");
                 var li_title = jQuery(this).data("title");
                 var li_link = jQuery(this).data("link");
                 jQuery(this).closest('.layers-list').find('#button_show_all_layer > #the_current-editing-layer-title').val(li_text);
                 jQuery('#frame_layer .tp-caption.active').removeClass('active');
                 jQuery('#frame_layer .tp-caption').each(function (index) {
-                    if (jQuery(this).data("text") == li_text || (jQuery(this).data("attachment_id") == li_attachment_id && li_url !== undefined)) {
+                    if (jQuery(this).data("text") == li_text || (jQuery(this).data("img_id") == li_img_id && li_url !== undefined)) {
                         jQuery(this).addClass('active');
                     }
                 });
@@ -702,15 +704,17 @@ jQuery(document).ready(function ($) {
                 $('#time-line li').eq(_index + 1).addClass('active');
             }
             changeLayerVis();
-            jQuery('#quick-layers-list > li').each(function (index) {
+            var active_obj = jQuery('.tp-caption.active');
+            jQuery('#quick-layers-list > li').each(function () {
                 jQuery(this).removeClass('active');
-                if( jQuery(this).data('type') == 'text' && jQuery(this).data('text') == jQuery('.tp-caption.active').data('text')  ) {
+
+                if( active_obj.data('type') == 'text' && jQuery(this).data('text') == active_obj.data('text')  ) {
                     jQuery(this).addClass('active');
                 }
-                if( jQuery(this).data('type') == 'link' && jQuery(this).data('text') == jQuery('.tp-caption.active').data('text')  ) {
+                if( active_obj.data('type') == 'link' && jQuery(this).data('text') == active_obj.data('text')  ) {
                     jQuery(this).addClass('active');
                 }
-                if( jQuery(this).data('type') == 'image' && jQuery(this).data('attachment_id') == jQuery('.tp-caption.active').data('attachment_id')  ) {
+                if( active_obj.data('type') == 'image' && jQuery(this).data('img_id') == active_obj.data('img_id')  ) {
                     jQuery(this).addClass('active');
                 }
             });
@@ -937,10 +941,13 @@ jQuery(document).ready(function ($) {
             return false;
         }
         var e_type = jQuery("#frame_layer .active").data("type");
+        var obj_active = jQuery("#frame_layer .active");
         if( e_type == 'text' ) {
-            var obj_active = jQuery("#frame_layer .active");
             obj_active.clone().html(obj_active.data('text') + ' coppy').attr('data-text', obj_active.data('text') + ' coppy').removeClass('active').appendTo("#frame_layer");
-        } else {
+        } if(e_type == 'image') {
+            obj_active.clone().attr('data-img_id', obj_active.data('img_id') + '-coppy').removeClass('active').appendTo("#frame_layer");
+        }
+        else {
             obj_active.clone().removeClass('active').appendTo("#frame_layer");
         }
         jQuery('#quick-layers-list li').each(function(){
@@ -951,8 +958,8 @@ jQuery(document).ready(function ($) {
                     }
                     break;
                 case 'image':
-                    if( jQuery(this).data("data-attachment_id") == jQuery("#frame_layer .active").data("data-attachment_id") ) {
-                        jQuery(this).clone().removeClass('active').appendTo("#quick-layers-list");
+                    if( jQuery(this).data("img_id") == jQuery("#frame_layer .active").data("img_id") ) {
+                        jQuery(this).clone().attr('data-img_id', obj_active.data('img_id') + '-coppy').removeClass('active').appendTo("#quick-layers-list");
                     }
                     break;
             }
@@ -970,8 +977,9 @@ jQuery(document).ready(function ($) {
         } else {
             var li_text = jQuery("#frame_layer .active").data("text");
             var li_url = jQuery("#frame_layer .active").data("url");
+            var li_img_id = jQuery("#frame_layer .active").data("img_id");
             jQuery("#quick-layers-list li").each(function (index) {
-                if (jQuery(this).data("text") == li_text || (jQuery(this).data("url") !== undefined && jQuery(this).data("url") == li_url)) {
+                if (jQuery(this).data("text") == li_text || (jQuery(this).data("url") !== undefined && jQuery(this).data("url") == li_url) || (jQuery(this).data("img_id") !== undefined && jQuery(this).data("url") == li_img_id) ) {
                     jQuery(this).remove();
                 }
             });
@@ -993,12 +1001,9 @@ jQuery(document).ready(function ($) {
     });
     jQuery('#save-layers').click(function (e) {
         var layer_params = JSON.stringify(getLayersJson());
-        if( jQuery('#importjson').val() != "" ) {
-            layer_params = jQuery('#importjson').val();
-        }
         var slide_params = JSON.stringify(getSlideJson());
         var slide_title = jQuery( "input[name='title']" ).val();
-        //console.log(layer_params);
+        console.log(layer_params);
         jQuery('#layersjson').val(layer_params);
         jQuery('#slidejson').val(slide_params);
         jQuery('#slidetitle').val(slide_title);
@@ -1006,15 +1011,15 @@ jQuery(document).ready(function ($) {
         layersForm.submit();
         return false;
     });
+    jQuery('#import_submit').click(function (e) {
+        e.preventDefault();
+        var importtForm = document.importtForm;
+        importtForm.submit();
+    });
     /* Import - Export */
     jQuery('.import-wrapper > a').on('click', function (e) {
         e.preventDefault();
-        jQuery('.import-wrapper > #import_file').toggleClass('active');
-        jQuery('.import-wrapper > #import_file').on('change', function () {
-            if( jQuery(this).val() != '' ) {
-                jQuery('#importjson').val( jQuery(this).val() );
-            }
-        });
+        jQuery('.import-wrapper > #importtForm').toggleClass('active');
     });
 
     /**
@@ -1179,10 +1184,11 @@ jQuery(document).ready(function ($) {
             tpl_caption.attr('data-type', 'image');
             tpl_caption.attr('data-url', media_url);
             tpl_caption.attr('data-attachment_id', attachment['id']);
+            tpl_caption.attr('data-img_id', 'image-'+attachment['id']);
             tpl_caption.attr('data-visibility', 1);
             jQuery('#frame_layer').append(tpl_caption);
 
-            var clone_html = '<li data-url="'+media_url+'" data-attachment_id="'+attachment['id']+'" data-type="image">' +
+            var clone_html = '<li data-attachment_id="'+attachment['id']+'" data-img_id="image-'+attachment['id']+'" data-type="image">' +
                 '<i class="dashicons dashicons-format-image"></i>' +
                 '                <span>Image layers</span> </li>';
             jQuery('#quick-layers-list').append(clone_html);
