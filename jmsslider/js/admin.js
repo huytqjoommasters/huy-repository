@@ -96,8 +96,9 @@ jQuery(document).ready(function ($) {
     });
 
     /* Show List Layer click */
-    jQuery('#button_show_all_layer > i.dashicons-menu').click(function (event) {
+    jQuery('#button_show_all_layer > i.dashicons-menu').on('click', function () {
         jQuery(this).closest('.layers-list').find('#quick-layers-wrapper').toggleClass('show-list');
+        layerListClick();
     });
     jQuery(document).ready(function(){
         jQuery("#layer_type").val( jQuery("#frame_layer .active").data("type") );
@@ -109,11 +110,12 @@ jQuery(document).ready(function ($) {
         if (jQuery("#layer_type").val() == 'link') {
             jQuery("#layer_url").val(jQuery("#frame_layer .active").data("link"));
         }
-
-        if( bg_type == 'image') {
-            jQuery("#bg_image").prop('checked', true);
-        } else {
-            jQuery("#bg_color").prop('checked', true);
+        if(typeof(bg_type)  !== "undefined") {
+            if( bg_type == 'image') {
+                jQuery("#bg_image").prop('checked', true);
+            } else {
+                jQuery("#bg_color").prop('checked', true);
+            }
         }
         jQuery("input[name='bg_type']").change(function(){
             var ip_var = jQuery("input[name='bg_type']:checked").val();
@@ -234,16 +236,18 @@ jQuery(document).ready(function ($) {
                         var attachment = frame.state().get('selection').first().toJSON();
                         var media_url = attachment['url'].replace(jQuery('#root_url').val(), "");
                         var tpl_caption = jQuery('#frame_layer .tp-caption.active');
+                        var rIndex = Math.floor(Math.random() * 1000);
                         tpl_caption.attr('data-title', attachment['title']);
                         tpl_caption.attr('data-type', 'image');
                         tpl_caption.attr('data-url', media_url);
                         tpl_caption.attr('data-attachment_id', attachment['id']);
+                        tpl_caption.attr('data-img_id', 'image-'+rIndex);
                         tpl_caption.html('<img src="' + attachment['url'] + '" />');
                         jQuery("#layer_attachment_id").val( attachment['id'] );
                         jQuery('#quick-layers-list > li').each(function () {
                             if (jQuery(this).data("attachment_id") == selected_id) {
                                 jQuery(this).attr('data-attachment_id', attachment['id']);
-                                jQuery(this).attr('data-img_id', 'image-'+attachment['id']);
+                                jQuery(this).attr('data-img_id', 'image-'+rIndex);
                             }
                         });
                         tpl_caption.find('img').attr('data-src', jQuery('#root_url').val() + media_url);
@@ -274,9 +278,9 @@ jQuery(document).ready(function ($) {
         jQuery('#show-tablet-layer').on('click', function () {
             layerBtnEvent(layer_visibility);
         });
-        
+
         /* ------ */
-        layerListClick();
+        //layerListClick();
         /* Responsive Button Event */
         jQuery(".tab > .tab-mobile").hide();
         jQuery(".tab > .tab-tablet").hide();
@@ -472,65 +476,65 @@ jQuery(document).ready(function ($) {
 
     /* */
     function layerListClick() {
-        jQuery('#quick-layers-list > li').each(function () {
-            jQuery(this).click(function (event) {
-                jQuery('#quick-layers-list > li').removeClass('active');
-                var li_text = jQuery(this).data("text");
-                var li_url = jQuery(this).data("url");
-                var li_attachment_id = jQuery(this).data("attachment_id");
-                var li_img_id = jQuery(this).data("img_id");
-                var li_title = jQuery(this).data("title");
-                var li_link = jQuery(this).data("link");
-                jQuery(this).closest('.layers-list').find('#button_show_all_layer > #the_current-editing-layer-title').val(li_text);
-                jQuery('#frame_layer .tp-caption.active').removeClass('active');
-                jQuery('#frame_layer .tp-caption').each(function (index) {
-                    if (jQuery(this).data("text") == li_text || (jQuery(this).data("img_id") == li_img_id && li_url !== undefined)) {
-                        jQuery(this).addClass('active');
-                    }
-                });
-                changeLayerVis();
-                if (jQuery(this).data("type") == 'link') {
-                    $('.linkurl').show();
-                    jQuery("#layer_url").val( jQuery(this).data("link") );
-                } else {
-                    $('.linkurl').hide();
+        jQuery('#quick-layers-list > li').on('click', function (event) {
+            event.preventDefault();
+            jQuery('#quick-layers-list > li').removeClass('active');
+            jQuery(this).addClass('active');
+            var li_text = jQuery(this).data("text");
+            var li_attachment_id = jQuery(this).data("attachment_id");
+            var li_img_id = jQuery(this).data("img_id");
+            var li_title = jQuery(this).data("title");
+            var li_link = jQuery(this).data("link");
+            jQuery(this).closest('.layers-list').find('#button_show_all_layer > #the_current-editing-layer-title').val(li_text);
+
+            jQuery('#frame_layer > .tp-caption').each(function (index) {
+                jQuery(this).removeClass('active');
+                if( jQuery(this).data("type") == 'image' && jQuery(this).data("img_id") == li_img_id  ) {
+                    jQuery(this).addClass('active');
+                } else if( jQuery(this).data("text") == li_text ) {
+                    jQuery(this).addClass('active');
                 }
-                if (jQuery(this).data("type") == 'image' && li_attachment_id !== undefined) {
-                    jQuery("#layer_url").val( li_url );
-                    jQuery("#layer_attachment_id").val( li_attachment_id );
-                    jQuery("#the_current-editing-layer-title").val("Image Layer");
-                }
-                jQuery("#layer_type").val(jQuery(this).data("type"));
-                jQuery("#layer_text").val('text', li_text);
-                jQuery("#layer_title").val('title', li_title);
-                loadData(jQuery(this));
-                jQuery("#edit-layer-btn").click(function () {
-                    jQuery('#quick-layers-wrapper').removeClass('show-list');
-                    var flag = jQuery("#layer_type").val();
-                    switch (flag) {
-                        case 'text':
-                            var this_setting = $('.jms-wrap-model.add_text_layer');
-                            this_setting.find('#title_text_new').val("");
-                            this_setting.find('#text_layer').val("");
-                            this_setting.find('#title_text_new').val(li_title);
-                            this_setting.find('#text_layer').val(li_text);
-                            this_setting.show('400');
-                            break;
-                        case 'link':
-                            var this_setting = $('.jms-wrap-model.add_link_layer');
-                            this_setting.find('#title_link_new').val("");
-                            this_setting.find('#link_text').val("");
-                            this_setting.find('#link_url').val("");
-                            this_setting.find('#title_link_new').val(li_title);
-                            this_setting.find('#link_text').val(li_text);
-                            this_setting.find('#link_url').val(li_link);
-                            this_setting.show('400');
-                            break;
-                    }
-                });
-                jQuery("#quick-layers-wrapper").removeClass('show-list');
-                jQuery(this).addClass('active');
             });
+            changeLayerVis();
+            if (jQuery(this).data("type") == 'link') {
+                $('.linkurl').show();
+                jQuery("#layer_url").val( jQuery(this).data("link") );
+            } else {
+                $('.linkurl').hide();
+            }
+            if (jQuery(this).data("type") == 'image' && li_attachment_id !== undefined) {
+                jQuery("#layer_attachment_id").val( li_attachment_id );
+                jQuery("#the_current-editing-layer-title").val("Image Layer");
+            }
+            jQuery("#layer_type").val(jQuery(this).data("type"));
+            jQuery("#layer_text").val('text', li_text);
+            jQuery("#layer_title").val('title', li_title);
+            loadData(jQuery(this));
+            jQuery("#edit-layer-btn").click(function () {
+                jQuery('#quick-layers-wrapper').removeClass('show-list');
+                var flag = jQuery("#layer_type").val();
+                switch (flag) {
+                    case 'text':
+                        var this_setting = $('.jms-wrap-model.add_text_layer');
+                        this_setting.find('#title_text_new').val("");
+                        this_setting.find('#text_layer').val("");
+                        this_setting.find('#title_text_new').val(li_title);
+                        this_setting.find('#text_layer').val(li_text);
+                        this_setting.show('400');
+                        break;
+                    case 'link':
+                        var this_setting = $('.jms-wrap-model.add_link_layer');
+                        this_setting.find('#title_link_new').val("");
+                        this_setting.find('#link_text').val("");
+                        this_setting.find('#link_url').val("");
+                        this_setting.find('#title_link_new').val(li_title);
+                        this_setting.find('#link_text').val(li_text);
+                        this_setting.find('#link_url').val(li_link);
+                        this_setting.show('400');
+                        break;
+                }
+            });
+            jQuery("#quick-layers-wrapper").removeClass('show-list');
         });
     }
 
@@ -942,10 +946,11 @@ jQuery(document).ready(function ($) {
         }
         var e_type = jQuery("#frame_layer .active").data("type");
         var obj_active = jQuery("#frame_layer .active");
+        var rIndex = Math.floor(Math.random() * 1000);
         if( e_type == 'text' ) {
             obj_active.clone().html(obj_active.data('text') + ' coppy').attr('data-text', obj_active.data('text') + ' coppy').removeClass('active').appendTo("#frame_layer");
         } if(e_type == 'image') {
-            obj_active.clone().attr('data-img_id', obj_active.data('img_id') + '-coppy').removeClass('active').appendTo("#frame_layer");
+            obj_active.clone().attr('data-img_id', 'image-'+rIndex).removeClass('active').appendTo("#frame_layer");
         }
         else {
             obj_active.clone().removeClass('active').appendTo("#frame_layer");
@@ -959,12 +964,13 @@ jQuery(document).ready(function ($) {
                     break;
                 case 'image':
                     if( jQuery(this).data("img_id") == jQuery("#frame_layer .active").data("img_id") ) {
-                        jQuery(this).clone().attr('data-img_id', obj_active.data('img_id') + '-coppy').removeClass('active').appendTo("#quick-layers-list");
+                        jQuery(this).clone().attr('data-img_id', 'image-'+rIndex).removeClass('active').appendTo("#quick-layers-list");
                     }
                     break;
             }
         });
         list_event();
+        //layerListClick();
     });
     jQuery('#del-layer').click(function () {
         if (jQuery("#frame_layer .active").length == 0) {
@@ -1003,7 +1009,6 @@ jQuery(document).ready(function ($) {
         var layer_params = JSON.stringify(getLayersJson());
         var slide_params = JSON.stringify(getSlideJson());
         var slide_title = jQuery( "input[name='title']" ).val();
-        console.log(layer_params);
         jQuery('#layersjson').val(layer_params);
         jQuery('#slidejson').val(slide_params);
         jQuery('#slidetitle').val(slide_title);
@@ -1069,7 +1074,7 @@ jQuery(document).ready(function ($) {
 
         var layers_list = jQuery('<li data-type="text" data-text="' + text_layer + '"> <i class="dashicons dashicons-format-aside"></i> <span>' + text_layer + '</span> </li>');
         jQuery('#quick-layers-list').append(layers_list);
-        layerListClick();
+        //layerListClick();
         jQuery('.jms-wrap-model').hide('400');
         var _index = jQuery('.tp-caption').index(tpl_caption);
         loadTimeLines();
@@ -1161,10 +1166,6 @@ jQuery(document).ready(function ($) {
 
     jQuery('#add-image').click(function (e) {
         e.preventDefault();
-        if (frame) {
-            frame.open();
-            return;
-        }
         // Create a new media frame
         frame = wp.media({
             title: 'Select Image Layer',
@@ -1179,16 +1180,16 @@ jQuery(document).ready(function ($) {
             var tpl_caption = jQuery('<div />', {
                 'class': 'tp-caption ui-draggable ui-draggable-handle'
             });
+            var rIndex = Math.floor(Math.random() * 1000);
             tpl_caption.html('<img src="' + attachment['url'] + '" />');
             tpl_caption.attr('data-title', attachment['title']);
             tpl_caption.attr('data-type', 'image');
             tpl_caption.attr('data-url', media_url);
             tpl_caption.attr('data-attachment_id', attachment['id']);
-            tpl_caption.attr('data-img_id', 'image-'+attachment['id']);
+            tpl_caption.attr('data-img_id', 'image-'+rIndex);
             tpl_caption.attr('data-visibility', 1);
             jQuery('#frame_layer').append(tpl_caption);
-
-            var clone_html = '<li data-attachment_id="'+attachment['id']+'" data-img_id="image-'+attachment['id']+'" data-type="image">' +
+            var clone_html = '<li data-attachment_id="'+attachment['id']+'" data-img_id="image-'+rIndex+'" data-type="image">' +
                 '<i class="dashicons dashicons-format-image"></i>' +
                 '                <span>Image layers</span> </li>';
             jQuery('#quick-layers-list').append(clone_html);
@@ -1196,6 +1197,20 @@ jQuery(document).ready(function ($) {
         });
         frame.open();
     });
+    /* Import slider event */
+    jQuery("#zip_file").val("");
+    jQuery(".btn-import").on('click', function (e) {
+        e.preventDefault();
+        jQuery(".upload-slider-popup").addClass("active");
+        jQuery(".upload-bg").addClass("active");
+    });
+    jQuery(".close-upload").on('click', function (e) {
+        e.preventDefault();
+        jQuery(".upload-slider-popup").removeClass("active");
+        jQuery(".upload-bg").removeClass("active");
+        jQuery("#zip_file").val("");
+    });
+    /* ------- */
     list_event();
     horRuler();
     drawRuler();

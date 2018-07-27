@@ -1,226 +1,3 @@
-<?php
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST["slider_submit"])) {
-        $errors = array();
-        $slider = new JmsSlider();
-        if (empty($_POST['title'])) {
-            $errors[] = 'title';
-        } else {
-            $slider->setTitle(sanitize_text_field($_POST['title']));
-        }
-
-        if (empty($_POST['alias'])) {
-            $errors[] = 'alias';
-        } else {
-            $slider->setAlias(sanitize_html_class($_POST['alias']));
-        }
-
-        // Settings
-        if (empty($_POST['JMS_SLIDER_DELAY'])) {
-            $delay = '1000';
-        } else {
-            $delay = intval($_POST['JMS_SLIDER_DELAY']);
-        }
-
-        if (empty($_POST['JMS_SLIDER_DURATION'])) {
-            $duration = '7000';
-        } else {
-            $duration = intval($_POST['JMS_SLIDER_DURATION']);
-        }
-
-        if (empty($_POST['JMS_SLIDER_X'])) {
-            $position_x = '0';
-        } else {
-            $position_x = intval($_POST['JMS_SLIDER_X']);
-        }
-
-        if (empty($_POST['JMS_SLIDER_Y'])) {
-            $position_y = '0';
-        } else {
-            $position_y = intval($_POST['JMS_SLIDER_Y']);
-        }
-
-        if (isset($_POST['JMS_SLIDER_TRANSITION'])) {
-            $transition = $_POST['JMS_SLIDER_TRANSITION'];
-        } else {
-            $transition = 'fade';
-        }
-
-        if (isset($_POST['JMS_SLIDER_TRANSITION_IN'])) {
-            $transition_in = $_POST['JMS_SLIDER_TRANSITION_IN'];
-        } else {
-            $transition_in = 'fade';
-        }
-
-        if (isset($_POST['JMS_SLIDER_TRANSITION_OUT'])) {
-            $transition_out = $_POST['JMS_SLIDER_TRANSITION_OUT'];
-        } else {
-            $transition_out = 'fade';
-        }
-
-        if (isset($_POST['JMS_SLIDER_EASE_IN'])) {
-            $ease_in = $_POST['JMS_SLIDER_EASE_IN'];
-        } else {
-            $ease_in = 'linear';
-        }
-
-        if (isset($_POST['JMS_SLIDER_EASE_OUT'])) {
-            $ease_out = $_POST['JMS_SLIDER_EASE_OUT'];
-        } else {
-            $ease_out = 'linear';
-        }
-
-        if (empty($_POST['JMS_SLIDER_SPEED_IN'])) {
-            $speed_in = '500';
-        } else {
-            $speed_in = intval($_POST['JMS_SLIDER_SPEED_IN']);
-        }
-
-        if (empty($_POST['JMS_SLIDER_SPEED_OUT'])) {
-            $speed_out = '500';
-        } else {
-            $speed_out = intval($_POST['JMS_SLIDER_SPEED_OUT']);
-        }
-
-        if (empty($_POST['JMS_SLIDER_MAX_WIDTH'])) {
-            $max_width = '1170';
-        } else {
-            $max_width = intval($_POST['JMS_SLIDER_MAX_WIDTH']);
-        }
-
-        if (empty($_POST['JMS_SLIDER_MAX_HEIGHT'])) {
-            $max_height = '450';
-        } else {
-            $max_height = intval($_POST['JMS_SLIDER_MAX_HEIGHT']);
-        }
-        if (empty($_POST['JMS_SLIDER_TABLET_HEIGHT'])) {
-            $tablet_height = '450';
-        } else {
-            $tablet_height = intval($_POST['JMS_SLIDER_TABLET_HEIGHT']);
-        }
-        if (empty($_POST['JMS_SLIDER_MOBILE_HEIGHT'])) {
-            $mobile_height = '300';
-        } else {
-            $mobile_height = intval($_POST['JMS_SLIDER_MOBILE_HEIGHT']);
-        }
-        if (isset($_POST['JMS_SLIDER_BG_ANIMATE'])) {
-            $bg_animate = $_POST['JMS_SLIDER_BG_ANIMATE'];
-        } else {
-            $bg_animate = '0';
-        }
-
-        if (isset($_POST['JMS_SLIDER_BG_EASE'])) {
-            $bg_ease = $_POST['JMS_SLIDER_BG_EASE'];
-        } else {
-            $bg_ease = 'linear';
-        }
-
-        if (isset($_POST['JMS_SLIDER_END_ANIMATE'])) {
-            $end_animate = $_POST['JMS_SLIDER_END_ANIMATE'];
-        } else {
-            $end_animate = '1';
-        }
-
-        if (isset($_POST['JMS_SLIDER_FULL_WIDTH'])) {
-            $full_width = $_POST['JMS_SLIDER_FULL_WIDTH'];
-        } else {
-            $full_width = '0';
-        }
-        if (isset($_POST['JMS_SLIDER_FULL_HEIGHT'])) {
-            $full_height = $_POST['JMS_SLIDER_FULL_HEIGHT'];
-        } else {
-            $full_height = '0';
-        }
-        if (isset($_POST['JMS_SLIDER_RESPONSIVE'])) {
-            $responsive = $_POST['JMS_SLIDER_RESPONSIVE'];
-        } else {
-            $responsive = '1';
-        }
-
-        if (isset($_POST['JMS_SLIDER_AUTO_CHANGE'])) {
-            $auto_change = $_POST['JMS_SLIDER_AUTO_CHANGE'];
-        } else {
-            $auto_change = '1';
-        }
-
-        if (isset($_POST['JMS_SLIDER_PAUSE_HOVER'])) {
-            $pause_hover = $_POST['JMS_SLIDER_PAUSE_HOVER'];
-        } else {
-            $pause_hover = '1';
-        }
-
-        if (isset($_POST['JMS_SLIDER_SHOW_PAGERS'])) {
-            $show_pagers = $_POST['JMS_SLIDER_SHOW_PAGERS'];
-        } else {
-            $show_pagers = '1';
-        }
-
-        if (isset($_POST['JMS_SLIDER_SHOW_CONTROLS'])) {
-            $show_controls = $_POST['JMS_SLIDER_SHOW_CONTROLS'];
-        } else {
-            $show_controls = '1';
-        }
-
-        $m = array(
-            'delay' => $delay,
-            'duration' => $duration,
-            'position_x' => $position_x,
-            'position_y' => $position_y,
-            'transition_all' => $transition,
-            'transition_in' => $transition_in,
-            'transition_out' => $transition_out,
-            'ease_in' => $ease_in,
-            'ease_out' => $ease_out,
-            'speed_in' => $speed_in,
-            'speed_out' => $speed_out,
-            'max_width' => $max_width,
-            'max_height' => $max_height,
-            'tablet_height' => $tablet_height,
-            'mobile_height' => $mobile_height,
-            'background_animate' => $bg_animate,
-            'background_ease' => $bg_ease,
-            'end_animate' => $end_animate,
-            'full_width' => $full_width,
-            'full_height' => $full_height,
-            'responsive' => $responsive,
-            'auto_change' => $auto_change,
-            'pause_hover' => $pause_hover,
-            'show_pagers' => $show_pagers,
-            'show_controls' => $show_controls
-        );
-        $slider->setSettings($m);
-        $slider->submitSlider($id);
-    }
-    if (isset($_POST["slide_submit"])) {
-        $slide = new JmsSlide();
-        $id_slider = $_POST['id_slider'];
-        $errors = array();
-        if (empty($_POST['title'])) {
-            $errors[] = 'title';
-        } else {
-            $slide->setTitle($_POST['title']);
-        }
-
-        $slide_link = sanitize_text_field($_POST['slide_link']);
-        $class = sanitize_html_class($_POST['class']);
-        $bg_type = "";
-        if (isset($_POST['bg_type'])) {
-            $bg_type = $_POST['bg_type'];
-        }
-        $image_url = sanitize_text_field($_POST['image_url']);
-        $bg_color = sanitize_text_field($_POST['bg_color']);
-        $m = array(
-            'slide_link' => $slide_link,
-            'class' => $class,
-            'bg_type' => $bg_type,
-            'bg_image' => $image_url,
-            'bg_color' => $bg_color
-        );
-        $slide->setParams($m);
-        $slide->submitSlide($errors, $id, $id_slider);
-    }
-} //End if submit condition
-?>
 <div class="wrap jmsslider">
     <h2>
         <?php echo esc_html_e('Slider title and shortcode', 'jmsslider'); ?>
@@ -236,9 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $slide = $wpdb->get_results($_query);
 
     $export_safe_link = wp_nonce_url('admin.php?page=jmssliderlayer&task=export_slider&id=' . esc_html($id), 'export_' . $id, 'export_nonce');
-    $import_safe_link = wp_nonce_url('admin.php?page=jmssliderlayer&task=import_slider&id=' . esc_html($id), 'import_' . $id, 'import_nonce');
+    $edit_slider_safe_link = wp_nonce_url('admin.php?page=jmssliderlayer&task=edit_slider&id=' . esc_html($id), 'edit_slider_' . $id, 'edit_slider_nonce');
     ?>
-    <form action="#" method="POST" class="edit_form" id="edit_form">
+    <form action="<?php echo $edit_slider_safe_link; ?>" method="POST" class="edit_form" id="edit_form">
         <div class="add-slider">
             <div class="row-input">
                 <input type="text" id="title" name="title" value="<?php if (!empty($slider_row->title)) {
@@ -265,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <ul class="btn-action">
                 <li>
-                    <button type="submit" name="slider_submit"
+                    <button type="submit"
                             class="btn-save fixed-right" title="<?php echo esc_html_e('Save', 'jmsslider'); ?>">
                         <i class="dashicons dashicons-welcome-write-blog"></i>
                     </button>
@@ -295,7 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <ul class="list-slides">
                 <?php
                 foreach ($slide as $slide_item) {
-                    //print_r($slide_item);
                     $_params = json_decode($slide_item->params);
                     $bg_image = "";
                     if (isset($_params->bg_image)) {
@@ -565,10 +341,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <i class="dashicons dashicons-no-alt"></i>
     </a>
     <h3>Chose slider top upload.</h3>
-    <form method="post" action="<?php echo $import_safe_link; ?>" enctype="multipart/form-data" name="importtForm"
-          id="importtForm">
+    <form method="post" action="" enctype="multipart/form-data" name="importtForm" id="importtForm">
         <input type="file" name="zip_file" id="zip_file"/>
         <input type="submit" value="upload" class="button"/>
     </form>
 </div>
 <div class="upload-bg"></div>
+<?php
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_FILES) && $_FILES != null) {
+        $import = new JmsImportExport();
+        if ($_FILES["zip_file"] != null) {
+            if ($_FILES["zip_file"]["error"] > 0) {
+                echo "Error: " . $_FILES["zip_file"]["error"] . "<br />";
+            } else {
+                if ($_FILES["zip_file"]["type"] == 'application/x-zip-compressed') {
+                    $overrides = array('test_form' => false, 'test_type' => false);
+                    wp_handle_upload($_FILES["zip_file"], $overrides);
+
+                    WP_Filesystem();
+                    $import->importSlider($_FILES["zip_file"]["name"], $id);
+                }
+            }
+        }
+    }
+}
+?>

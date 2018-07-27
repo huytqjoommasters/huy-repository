@@ -25,4 +25,3 @@
 
 		echo $add_layer = json_encode($a_layer);
 	}
-?>

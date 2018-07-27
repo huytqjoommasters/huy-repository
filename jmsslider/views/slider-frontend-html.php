@@ -1,5 +1,4 @@
 <?php
-
 /*
 * Plugin Name: Jms Slider Layer
 * Plugin URI: http://joommasters.com
@@ -26,7 +25,6 @@ if ( ! defined( 'ABSPATH' )) {
 				$slides = $wpdb->get_results( $q );
 				$setting = json_decode($slider->settings, true);
 			?>
-
 			<?php foreach($slides as $slide) : ?>
 				<?php $params = json_decode($slide->params, true); ?>
 					<div class="slide <?php echo esc_attr($params['class']); ?>" id="slide_<?php echo intval($slide->id_slide); ?>" style="<?php if ($params['bg_type'] == 'color') { echo 'background-color: '.esc_attr($params['bg_color']).';'; } elseif($params['bg_type'] == 'image') { if(strpos($params['bg_image'], "http") !== false) $bg_url = $params['bg_image']; else $bg_url = site_url().$params['bg_image']; echo 'background: url('. esc_url($bg_url) .') no-repeat scroll center center / cover;';  } ?>">

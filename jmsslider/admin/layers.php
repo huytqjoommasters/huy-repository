@@ -1,186 +1,69 @@
-<?php
-
-/*
-* Plugin Name: Jms Slider Layer
-* Plugin URI: http://joommasters.com
-* Description: Responsive Wordpress Slider Plugin
-* Version: 1.0
-* Author: Joommasters
-* Author URI: http://joommasters.com
-* License:     GPL2
-* License URI: https://www.gnu.org/licenses/gpl-2.0.html
-*/
-
-if (!defined('ABSPATH')) {
-    exit;
-}
-global $wpdb;
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-} else {
-    $id = 0;
-}
-$_query = "SELECT *  FROM " . $wpdb->prefix . "jms_slider_slides WHERE id_slide = '" . $id . "'";
-$slide = $wpdb->get_row($_query);
-$slide_params = $slide->params;
-$_params = json_decode($slide_params);
-$class = $_params->class;
-$bg_type = $_params->bg_type;
-$bg_color = $_params->bg_color;
-$bg_image = $_params->bg_image;
-$_query = "SELECT *  FROM " . $wpdb->prefix . "jms_sliders WHERE id_slider = '" . $slide->id_slider . "'";
-$slider = $wpdb->get_row($_query);
-$slider_settings = $slider->settings;
-$_settings = json_decode($slider_settings, true);
-$_width = $_settings['max_width'];
-$_height = $_settings['max_height'];
-$data = $slide->layers;
-$layers = is_string($data) ? json_decode($data, true) : $data;
-$list_slide_safe_link = wp_nonce_url('admin.php?page=jmssliderlayer&task=list_slides&id=' . esc_html($slide->id_slider), 'list_slides_' . $slide->id_slider, 'list_slides_nonce');
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_FILES) && $_FILES["zip_file"] != null ) {
-        if ($_FILES["zip_file"]["error"] > 0) {
-            echo "Error: " . $_FILES["zip_file"]["error"] . "<br />";
-        } else {
-            if( $_FILES["zip_file"]["type"] == 'application/x-zip-compressed' ) {
-                /*$target_file = get_home_path().'wp-content/plugins/jmsslider/json/';
-                move_uploaded_file($_FILES["zip_file"]["tmp_name"], $target_file.$_FILES["zip_file"]["name"]);*/
-                $id_slide = $_POST['id_slide'];
-                $overrides = array( 'test_form' => false, 'test_type' => false );
-                wp_handle_upload( $_FILES["zip_file"], $overrides );
-
-                WP_Filesystem();
-                $destination = wp_upload_dir();
-                $destination_path = $destination['path'];
-
-                $unzipfile = unzip_file( $destination_path.'/'.$_FILES["zip_file"]["name"], $destination_path);
-                unlink($destination_path.'/'.$_FILES["zip_file"]["name"]);
-                if ( is_wp_error( $unzipfile ) ) {
-                    echo 'There was an error unzipping the file.';
-                } else {
-                    if( file_exists($destination_path.'/images') ) {
-                        full_copy($destination_path.'/images/uploads', WP_CONTENT_DIR.'/uploads');
-                        deleteDirectory($destination_path.'/images');
-                    }
-                    if( file_exists($destination_path.'/slider.txt') ) {
-                        $layersjson = file_get_contents($destination_path.'/slider.txt');
-                        if ( $layersjson != $data ) {
-                            $update_slide = $wpdb->update(
-                                $wpdb->prefix . 'jms_slider_slides',
-                                array(
-                                    'layers' => $layersjson
-                                ),
-                                array('id_slide' => $id),
-                                array(
-                                    '%s'
-                                ),
-                                array('%d')
-                            );
-                            if ($update_slide) {
-                                echo '<div class="updated"><p><strong>';
-                                echo esc_html_e('The slide layers was imported successfully', 'jmsslider') . '.</strong></p></div>';
-                                echo '<script>
-							setTimeout(function(){ window.location.reload(1); } , 3000);
-					  </script>';
-                            } else {
-                                echo '<div id="message" class="error"><p>';
-                                echo esc_html_e('Error in update process', 'jmsslider') . '.</p></div>';
-                            }
-                        } else {
-                            echo '<div id="message" class="error"><p>';
-                            echo esc_html_e('Data is same', 'jmsslider') . '!</p></div>';
-                        }
-                        unlink($destination_path.'/slider.txt');
-                    }
-                }
-            }
-        }
+<div class="wrap jmsslider">
+    <h2>
+        <?php
+        echo esc_html_e('Edit Slide', 'jmsslider');
+        ?>
+    </h2>
+    <?php
+    global $wpdb;
+    if (isset($_GET['id'])) {
+        $id = $_GET['id'];
     } else {
+        $id = 0;
+    }
+    if (isset($_GET['slider'])) {
+        $slider_id = $_GET['slider'];
+    } else {
+        $slider_id = 0;
+    }
+    $_query = "SELECT *  FROM " . $wpdb->prefix . "jms_slider_slides WHERE id_slide = '" . $id . "'";
+    $slide = $wpdb->get_row($_query);
+    $slide_params = $slide->params;
+    $_params = json_decode($slide_params);
+    $class = "";
+    if (isset($_params->class)) {
+        $class = $_params->class;
+    }
+
+    $bg_type = $_params->bg_type;
+    $bg_color = "";
+    if (isset($_params->bg_color)) {
+        $bg_color = $_params->bg_color;
+    }
+    $bg_image = "";
+    if (isset($_params->bg_image)) {
+        $bg_image = $_params->bg_image;
+    }
+    $_query = "SELECT *  FROM " . $wpdb->prefix . "jms_sliders WHERE id_slider = '" . $slide->id_slider . "'";
+    $slider = $wpdb->get_row($_query);
+    $slider_settings = $slider->settings;
+    $_settings = json_decode($slider_settings, true);
+    $_width = $_settings['max_width'];
+    $_height = $_settings['max_height'];
+    $data = $slide->layers;
+    $layers = is_string($data) ? json_decode($data, true) : $data;
+    $edit_slider_safe_link = wp_nonce_url('admin.php?page=jmssliderlayer&task=edit_slider&id=' . esc_html($slider_id), 'edit_slider_' . $slider_id, 'edit_slider_nonce');
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $id_slide = $_POST['id_slide'];
         $layersjson = stripslashes_deep($_POST['layersjson']);
         $slidejson = stripslashes_deep($_POST['slidejson']);
         $slidetitle = stripslashes_deep($_POST['slidetitle']);
-        if ($layersjson != $data || $slidejson != $slide->params) {
-            $update_slide = $wpdb->update(
-                $wpdb->prefix . 'jms_slider_slides',
-                array(
-                    'title' => $slidetitle,
-                    'params' => $slidejson,
-                    'layers' => $layersjson
-                ),
-                array('id_slide' => $id_slide),
-                array(
-                    '%s'
-                ),
-                array('%d')
-            );
-            if ($update_slide) {
-                echo '<div class="updated"><p><strong>';
-                echo esc_html_e('The slide layers was updated successfully', 'jmsslider') . '.</strong></p></div>';
-                echo '<script>
-							setTimeout(function(){ window.location.reload(1); } , 3000);
-					  </script>';
-            } else {
-                echo '<div id="message" class="error"><p>';
-                echo esc_html_e('Error in update process', 'jmsslider') . '.</p></div>';
-            }
+        if ($layersjson != $data || $slidejson != $slide->params || $slidetitle != $slide->title) {
+            $sl = new JmsSlide();
+            $sl->upadteSlide($id_slide, $slidetitle, $slidejson, $layersjson);
         } else {
             echo '<div id="message" class="error"><p>';
             echo esc_html_e('Data is same', 'jmsslider') . '!</p></div>';
         }
     }
-}
-
-function full_copy( $source, $target ) {
-    if ( is_dir( $source ) ) {
-        @mkdir( $target );
-        $d = dir( $source );
-        while ( FALSE !== ( $entry = $d->read() ) ) {
-            if ( $entry == '.' || $entry == '..' ) {
-                continue;
-            }
-            $Entry = $source . '/' . $entry;
-            if ( is_dir( $Entry ) ) {
-                full_copy( $Entry, $target . '/' . $entry );
-                continue;
-            }
-            copy( $Entry, $target . '/' . $entry );
-        }
-
-        $d->close();
-    }else {
-        copy( $source, $target );
-    }
-}
-
-function deleteDirectory($dirPath) {
-    if (is_dir($dirPath)) {
-        $objects = scandir($dirPath);
-        foreach ($objects as $object) {
-            if ($object != "." && $object !="..") {
-                if (filetype($dirPath . DIRECTORY_SEPARATOR . $object) == "dir") {
-                    deleteDirectory($dirPath . DIRECTORY_SEPARATOR . $object);
-                } else {
-                    unlink($dirPath . DIRECTORY_SEPARATOR . $object);
-                }
-            }
-        }
-        reset($objects);
-        rmdir($dirPath);
-    }
-}
-?>
-<div class="wrap jmsslider">
-    <h2><?php echo esc_html_e('Edit Slide', 'jmsslider'); ?>
-        <a href="<?php echo $list_slide_safe_link; ?>"
-           class="btn pull-right"><?php echo esc_html_e('Back to Slides List', 'jmsslider'); ?></a>
-    </h2>
-    <?php
     if ($id) {
         $json = $slide->params;
         $j_setting = json_decode($json);
-        $class = $j_setting->class;
+        $class = "";
+        if (isset($j_setting->class)) {
+            $class = $j_setting->class;
+        }
         $slide_link = isset($j_setting->slide_link) ? $j_setting->slide_link : '';
         $bg_type = isset($j_setting->bg_type) ? $j_setting->bg_type : '';
         $bg_color = isset($j_setting->bg_color) ? $j_setting->bg_color : '';
@@ -241,29 +124,11 @@ function deleteDirectory($dirPath) {
     </div>
 </div>
 <div class="wrap layer-manager jmsslider">
-    <h2><?php echo esc_html_e('Layers Manager', 'jmsslider'); ?>
-        <a href="<?php echo $list_slide_safe_link; ?>"
-           class="btn pull-right"><?php echo esc_html_e('Back to Slides List', 'jmsslider'); ?></a>
+    <h2>
+        <?php
+        echo esc_html_e('Layers Manager', 'jmsslider');
+        ?>
     </h2>
-    <?php
-    $layers_safe_link = wp_nonce_url('admin.php?page=jmssliderlayer&task=export_slide&id=' . esc_html($slide->id_slide), 'export_' . $slide->id_slide, 'export_nonce');
-    ?>
-    <div class="import-export">
-        <div class="export-wrapper">
-            <a href="<?php echo $layers_safe_link; ?>" class="button" title="<?php echo esc_html_e('Export slider', 'jmsslider'); ?>">
-                <i class="dashicons dashicons-download"></i>
-            </a>
-        </div>
-        <div class="import-wrapper">
-            <a href="#" class="button" title="<?php echo esc_html_e('Import slider', 'jmsslider'); ?>">
-                <i class="dashicons dashicons-upload"></i>
-            </a>
-            <form method="post" action="" enctype="multipart/form-data" name="importtForm" id="importtForm">
-                <input type="file" name="zip_file">
-                <input type="submit" value="upload" class="button">
-            </form>
-        </div>
-    </div>
     <?php
     $transitions = array(
         0 => array('id' => 'none', 'name' => 'none'),
@@ -874,8 +739,20 @@ the direction-type values define the direction in which the element is animated.
                     </a></li>
             </ul>
         </div>
-        <button id="save-layers" type="submit" class="btn btn-success fixed-right"
-                title="Save Layers"><?php echo esc_html_e('Save', 'jmsslider'); ?></button>
+        <ul class="btn-action">
+            <li>
+                <button id="save-layers" type="submit"
+                        class="btn-save fixed-right" title="<?php echo esc_html_e('Save', 'jmsslider'); ?>">
+                    <i class="dashicons dashicons-welcome-write-blog"></i>
+                </button>
+            </li>
+            <li>
+                <a href="<?php echo $edit_slider_safe_link; ?>"
+                   class="btn-back" title="<?php echo esc_html_e('Back to Slider Manager', 'jmsslider'); ?>">
+                    <i class="dashicons dashicons-arrow-left-alt"></i>
+                </a>
+            </li>
+        </ul>
         <div class="layers-list">
             <div id="layer-short-toolbar">
                 <span id="button_show_all_layer">
@@ -901,7 +778,6 @@ the direction-type values define the direction in which the element is animated.
                         foreach ($layers as $layer) {
                             ?>
                             <li data-text="<?php echo $layer['text']; ?>" data-text="<?php echo $layer['type']; ?>"
-                                <?php if ($layer["type"] == 'image' && $layer['url'] != "") { ?>data-url="<?php echo $layer['url']; ?>" <?php } ?>
                                 <?php if ($layer["type"] == 'image' && $layer['attachment_id'] != "") { ?>data-attachment_id="<?php echo $layer['attachment_id']; ?>" <?php } ?>
                                 <?php if ($layer["type"] == 'image' && $layer['img_id'] != "") { ?>data-img_id="<?php echo $layer['img_id']; ?>" <?php } ?>
                                 <?php if ($layer["type"] == 'link') { ?>data-link="<?php echo $layer['link']; ?>" <?php } ?>
@@ -1183,13 +1059,11 @@ the direction-type values define the direction in which the element is animated.
         <input type="hidden" id="importjson" name="importjson" value=""/>
         <input type="hidden" name="id_slide" value="<?php echo $id; ?>"/>
         <input type="hidden" id="root_url" name="root_url" value="<?php echo site_url(); ?>"/>
-        <input type="file" name="zip_file" />
     </form>
     <p><strong><?php echo esc_html_e('Usage', 'jmsslider'); ?>
             :</strong> <?php echo esc_html_e('Click to Layer box or timeline to set for Layer active.', 'jmsslider'); ?>
     </p>
 </div>
-
 <script>
     var bg_type = '<?php echo $bg_type; ?>';
 
